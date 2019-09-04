@@ -1,0 +1,46 @@
+version: '3.1'
+services:
+
+  # Nginx Reverse Proxy
+  nginx:
+    container_name: vescd-nginx
+    image: nginx:1.13.12-alpine
+    ports:
+      - "3000:80"
+    volumes:
+      - ./docker/nginx/:/etc/nginx/conf.d/
+
+  # Express
+  express:
+    container_name: vescd-express
+    build:
+      context: ./docker/express
+    volumes:
+      - ./express:/app
+      - /app/node_modules
+  
+  # Database
+  db:
+    container_name: vescd-db
+    image: mariadb
+    restart: always
+    environment: 
+      MYSQL_ROOT_PASSWORD: example
+      MYSQL_DATABASE: vescd
+    volumes:
+      - ./vescd-db:/var/lib/mysql
+  
+  # phpmyadmin (for dev)
+  phpmyadmin:
+    container_name: vescd-phpmyadmin
+    image: phpmyadmin/phpmyadmin
+    environment:
+     - PMA_HOST=db
+     - PMA_PORT=3306
+     - PMA_USER=root
+     - PMA_PASSWORD=example
+     - PMA_ARBITRARY=1
+    restart: always
+    ports:
+     - 8080:80
+
