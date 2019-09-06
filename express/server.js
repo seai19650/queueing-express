@@ -11,4 +11,9 @@ const connection = mysql.createConnection({
 
 app.listen(3000, () => {
     console.log('My Rest API running on port 3000!');
-} )
+})
+
+app.get('/', (req, res) => {
+  res.send('okkkkk')
+})
+
