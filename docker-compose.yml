@@ -1,4 +1,4 @@
-version: '3.1'
+version: '3.3'
 services:
 
   # Nginx Reverse Proxy
@@ -45,4 +45,7 @@ services:
     restart: always
     ports:
      - 8080:80
+
+networks:
+  app-tier:
 

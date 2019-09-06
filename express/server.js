@@ -1,19 +1,14 @@
+const bodyParser = require('body-parser')
 const express = require('express')
-const mysql = require('mysql')
-const app = express()
 
-const connection = mysql.createConnection({
-  host: 'db',
-  user: 'root',
-  password: 'example',
-  database: 'vescd'
-})
+const app = express()
+app.use(bodyParser.json())
+app.use(bodyParser.urlencoded({ extended: false }))
+
+const cars = require('./routes/cars')
+
+app.use('/', cars)
 
 app.listen(3000, () => {
     console.log('My Rest API running on port 3000!');
 })
-
-app.get('/', (req, res) => {
-  res.send('okkkkk')
-})
-
