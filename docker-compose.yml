@@ -24,28 +24,20 @@ services:
   # Database
   db:
     container_name: vescd-db
-    image: mariadb
-    restart: always
-    environment: 
-      MYSQL_ROOT_PASSWORD: example
-      MYSQL_DATABASE: vescd
-    volumes:
-      - ./vescd-db:/var/lib/mysql
-  
-  # phpmyadmin (for dev)
-  phpmyadmin:
-    container_name: vescd-phpmyadmin
-    image: phpmyadmin/phpmyadmin
+    image: postgres
     environment:
-     - PMA_HOST=db
-     - PMA_PORT=3306
-     - PMA_USER=root
-     - PMA_PASSWORD=example
-     - PMA_ARBITRARY=1
-    restart: always
+      - POSTGRES_USER=vescd-access
+      - POSTGRES_PASSWORD=whateverItworks
+      - POSTGRES_DB=vescd
+    volumes:
+      - ./vescd-db:/var/lib/postgresql/data
+  
+  # pgAdmin
+  pgadmin:
+    container_name: vescd-pgadmin
+    image: dpage/pgadmin4
+    environment:
+      PGADMIN_DEFAULT_EMAIL: demo@email.com
+      PGADMIN_DEFAULT_PASSWORD: p@ssw0rd
     ports:
-     - 8080:80
-
-networks:
-  app-tier:
-
+      - 3001:80
