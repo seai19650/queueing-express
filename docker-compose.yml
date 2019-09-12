@@ -29,6 +29,8 @@ services:
       - POSTGRES_USER=vescd-access
       - POSTGRES_PASSWORD=whateverItworks
       - POSTGRES_DB=vescd
+    ports:
+      - 5432:5432
     volumes:
       - ./vescd-db:/var/lib/postgresql/data
   
