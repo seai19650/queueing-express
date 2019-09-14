@@ -1,5 +1,6 @@
 const express = require('express')
 const Car = require('../models').Car
+const winston = require('winston')
 
 const createCar = async (req, res) => {
   const car = await Car.findByPk(3)
@@ -7,6 +8,7 @@ const createCar = async (req, res) => {
 }
 
 const uploadCar = async (req, res) => {
+  winston.info(`soooo`)
   res.send(`ok uploads`)
 }
 

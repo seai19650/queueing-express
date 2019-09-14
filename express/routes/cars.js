@@ -1,9 +1,9 @@
 const express = require('express')
 const router = express.Router()
 const controller = require('../controllers/CarController')
-const upload = require('multer')
+const cors = require('cors')
 
 router.get('/', controller.createCar)
-router.get('/', controller.uploadCar)
+router.post('/', controller.uploadCar)
 
 module.exports = router
