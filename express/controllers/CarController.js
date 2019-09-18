@@ -8,7 +8,6 @@ const createCar = async (req, res) => {
 }
 
 const uploadCar = async (req, res) => {
-  winston.info(`soooo`)
   res.send(`ok uploads`)
 }
 

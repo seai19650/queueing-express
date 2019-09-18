@@ -43,3 +43,12 @@ services:
       PGADMIN_DEFAULT_PASSWORD: p@ssw0rd
     ports:
       - 8081:80
+
+  # RabbitMQ
+  rabbitmq:
+    container_name: vescd-rabbitmq
+    image: rabbitmq:management-alpine
+    tty: true
+    ports:
+        - "15672:15672"
+        - "5672:5672"
