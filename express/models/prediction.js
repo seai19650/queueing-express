@@ -17,4 +17,4 @@ module.exports = (sequelize, DataTypes) => {
     Prediction.belongsTo(models.Model)
   };
   return Prediction;
-};
+};mjjhjuhhuu

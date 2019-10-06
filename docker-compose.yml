@@ -24,7 +24,7 @@ services:
   # Database
   db:
     container_name: vescd-db
-    image: postgres
+    image: postgres:12
     environment:
       - POSTGRES_USER=vescd-access
       - POSTGRES_PASSWORD=whateverItworks
@@ -37,7 +37,7 @@ services:
   # pgAdmin
   pgadmin:
     container_name: vescd-pgadmin
-    image: dpage/pgadmin4
+    image: dpage/pgadmin4:4.13
     environment:
       PGADMIN_DEFAULT_EMAIL: demo@email.com
       PGADMIN_DEFAULT_PASSWORD: p@ssw0rd
@@ -47,7 +47,7 @@ services:
   # RabbitMQ
   rabbitmq:
     container_name: vescd-rabbitmq
-    image: rabbitmq:management-alpine
+    image: rabbitmq:management-alpine:3.8.0
     tty: true
     ports:
         - "15672:15672"
