@@ -47,7 +47,7 @@ services:
   # RabbitMQ
   rabbitmq:
     container_name: vescd-rabbitmq
-    image: rabbitmq:management-alpine:3.8.0
+    image: rabbitmq:3.8.0-management-alpine
     tty: true
     ports:
         - "15672:15672"
