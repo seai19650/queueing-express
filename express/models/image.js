@@ -6,8 +6,7 @@ module.exports = (sequelize, DataTypes) => {
   }, {})
   Image.associate = function(models) {
     Image.belongsTo(models.Request, {
-      foreignKey: 'requestId',
-      as: 'company'
+      foreignKey: 'requestId'
     })
   }
   return Image

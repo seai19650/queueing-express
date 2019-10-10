@@ -8,15 +8,20 @@ app.use(bodyParser.json())
 app.use(bodyParser.urlencoded({ extended: false }))
 app.use(cors())
 
-const cars = require('./routes/cars')
+const requests = require('./routes/requests')
 
-app.use('/car', cars)
+app.use('/request', requests)
 
-db.Request.findOne({
-    where: {id: 1}, include: ['images']
-}).then(findedRequest => {
-    console.log(findedRequest)
-})
+// db.Request.findOne({
+//     subQuery: false,
+//     where: {id: 1},
+//     include: [{
+//         model: db.Image,
+//         as: 'images'
+//     }]
+// })
+// .then(findedRequest => { console.log(findedRequest) })
+// .catch(error => { console.log(error) })
 
 
 app.listen(3000, () => {

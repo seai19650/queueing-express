@@ -7,8 +7,9 @@ module.exports = (sequelize, DataTypes) => {
   }, {})
   Request.associate = function(models) {
     Request.hasMany(models.Image, {
+      foreignKey: 'requestId',
       as: 'images'
     })
   }
-  return Request;
+  return Request
 }
