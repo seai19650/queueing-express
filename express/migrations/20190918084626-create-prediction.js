@@ -24,19 +24,11 @@ module.exports = {
       },
       modelId: {
         type: Sequelize.INTEGER,
-        allowNull: false,
-        references: {
-          model: 'Models',
-          key: 'id'
-        },
+        allowNull: false
       },
       imageId: {
         type: Sequelize.INTEGER,
-        allowNull: false,
-        references: {
-          model: 'Images',
-          key: 'id'
-        },
+        allowNull: false
       },
       createdAt: {
         allowNull: false,
