@@ -1,2 +1,2 @@
-# vescd-api
-RESTful API with Request Queuing for Visually Estimating Severity of Car Damage
+# Queueing API
+RESTful API with Request Queuing
