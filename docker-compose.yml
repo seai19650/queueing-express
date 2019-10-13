@@ -3,7 +3,7 @@ services:
 
   # Nginx Reverse Proxy
   nginx:
-    container_name: vescd-nginx
+    container_name: queueing-nginx
     image: nginx:1.13.12-alpine
     ports:
       - "8080:80"
@@ -13,7 +13,7 @@ services:
 
   # Express
   express:
-    container_name: vescd-express
+    container_name: queueing-express
     build:
       context: ./docker/express
     volumes:
@@ -23,22 +23,22 @@ services:
   
   # Database
   db:
-    container_name: vescd-db
+    container_name: queueing-db
     image: mariadb
     restart: always
     ports:
       - "3306:3306"
     volumes:
-      - ./vescd-db:/var/lib/mysql
+      - ./queueing-db:/var/lib/mysql
     environment:
-      MYSQL_USER: vescd-access
+      MYSQL_USER: queueing-access
       MYSQL_PASSWORD: whateverItworks
       MYSQL_ROOT_PASSWORD: example
-      MYSQL_DATABASE: vescd
+      MYSQL_DATABASE: queueing
   
   # adminer
   adminer:
-    container_name: vescd-adminer
+    container_name: queueing-adminer
     image: adminer
     restart: always
     ports:
@@ -46,7 +46,7 @@ services:
 
   # RabbitMQ
   rabbitmq:
-    container_name: vescd-rabbitmq
+    container_name: queueing-rabbitmq
     image: rabbitmq:3.8.0-management-alpine
     tty: true
     ports:

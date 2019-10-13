@@ -1,9 +1,9 @@
 {
   "development": {
-    "username": "vescd-access",
+    "username": "queueing-access",
     "password": "whateverItworks",
-    "database": "vescd",
-    "host": "vescd-db",
+    "database": "queueing",
+    "host": "queueing-db",
     "dialect": "mariadb",
     "dialectOptions": {
       "timezone": "Etc/GMT+7"
