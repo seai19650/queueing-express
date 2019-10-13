@@ -4,6 +4,9 @@
     "password": "whateverItworks",
     "database": "vescd",
     "host": "vescd-db",
-    "dialect": "mariadb"
+    "dialect": "mariadb",
+    "dialectOptions": {
+      "timezone": "Etc/GMT+7"
+    }
   }
 }
