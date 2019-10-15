@@ -1,34 +1,25 @@
 'use strict';
 module.exports = {
   up: (queryInterface, Sequelize) => {
-    return queryInterface.createTable('Predictions', {
+    return queryInterface.createTable('Users', {
       id: {
         allowNull: false,
         autoIncrement: true,
         primaryKey: true,
         type: Sequelize.INTEGER
       },
-      runAt: {
-        type: Sequelize.DATE
+      username: {
+        type: Sequelize.STRING,
+        allowNull: false,
+        unique: true
       },
-      finishedAt: {
-        type: Sequelize.DATE
-      },
-      result: {
-        type: Sequelize.ENUM,
-        values: [
-          'low',
-          'medium',
-          'high'
-        ]
-      },
-      modelId: {
-        type: Sequelize.INTEGER,
+      password: {
+        type: Sequelize.STRING,
         allowNull: false
       },
-      imageId: {
-        type: Sequelize.INTEGER,
-        allowNull: false
+      is_admin: {
+        type: Sequelize.BOOLEAN,
+        defaultValue: false
       },
       createdAt: {
         allowNull: false,
@@ -41,6 +32,6 @@ module.exports = {
     });
   },
   down: (queryInterface, Sequelize) => {
-    return queryInterface.dropTable('Predictions');
+    return queryInterface.dropTable('Users');
   }
 };

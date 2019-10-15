@@ -6,9 +6,9 @@ module.exports = (sequelize, DataTypes) => {
     year: DataTypes.STRING
   }, {})
   Request.associate = function(models) {
-    Request.hasMany(models.Image, {
+    Request.hasMany(models.Text, {
       foreignKey: 'requestId',
-      as: 'images'
+      as: 'texts'
     })
   }
   return Request

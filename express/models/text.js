@@ -1,13 +1,13 @@
 'use strict';
 module.exports = (sequelize, DataTypes) => {
-  const Image = sequelize.define('Image', {
+  const Text = sequelize.define('Text', {
     path: DataTypes.STRING,
     perspective: DataTypes.STRING
   }, {})
-  Image.associate = function(models) {
-    Image.belongsTo(models.Request, {
+  Text.associate = function(models) {
+    Text.belongsTo(models.Request, {
       foreignKey: 'requestId'
     })
   }
-  return Image
+  return Text
 }
