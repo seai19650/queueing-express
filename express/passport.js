@@ -7,7 +7,7 @@ const localStrategyConfig = new localStrategy(
     User.findOne({where:{username: username}}).then(function (user) {
       if (!user) return cb(null, false, {message: "Incorrect username."})
       if (!user.validPassword(password)) return cb(null, false, {message: "Invalid password."})
-      return cb(null, user)
+      return cb(null, user.dataValues)
     })
   }
 )

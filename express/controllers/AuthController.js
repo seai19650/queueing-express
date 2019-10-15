@@ -1,4 +1,4 @@
-const jwt = require("jwt-simple")
+const jwt = require("jsonwebtoken")
 const passport = require("passport")
 const User = require("../models").User
 
@@ -17,9 +17,20 @@ const login = async (req, res, next) => {
         res.send(err)
       }
     })
+    const signOptions = {
+      issuer:  "Queue API",
+      subject:  "queue",
+      audience:  user.username,
+      expiresIn: '15m'
+    }
+    
     delete user.password
-    const token = jwt.encode(user, SECRET)
-    return res.json({user, token})
+    delete user.createdAt
+    delete user.updatedAt
+
+    var token = jwt.sign(user, SECRET, signOptions)
+    return res.json(token)
+
   })(req, res)
 }
 
