@@ -22,8 +22,8 @@ const jwtStrategyConfig = new jwtStrategy(
     jwtFromRequest: jwtExtract.fromAuthHeaderAsBearerToken(),
     secretOrKey: SECRET
   },
-  function (payload, cb) {
-    return cb(null, payload)
+  function (user, cb) {
+    return cb(null, user)
   }
 )
 
