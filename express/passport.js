@@ -3,6 +3,10 @@ const passport = require("passport")
 const localStrategy = require("passport-local").Strategy
 
 const localStrategyConfig = new localStrategy(
+  {
+    usernameField: 'username',
+    passwordField: 'password'
+  },
   function (username, password, cb) {
     User.findOne({where:{username: username}}).then(function (user) {
       if (!user) return cb(null, false, {message: "Incorrect username."})

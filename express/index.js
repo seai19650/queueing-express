@@ -5,7 +5,7 @@ const cors = require("cors")
 const db = require("./models")
 
 app.use(bodyParser.json())
-app.use(bodyParser.urlencoded({ extended: false }))
+app.use(bodyParser.urlencoded({ extended: true }))
 app.use(cors())
 
 // Authentication Logic
