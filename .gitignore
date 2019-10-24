@@ -1,3 +1,4 @@
 queueing-db/
+queueing-rabbitmq/
 .DS_Store
 node_modules/

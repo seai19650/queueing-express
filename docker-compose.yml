@@ -48,7 +48,13 @@ services:
   rabbitmq:
     container_name: queueing-rabbitmq
     image: rabbitmq:3.8.0-management-alpine
+    hostname: rabbitmq
     tty: true
     ports:
-        - "15672:15672"
-        - "5672:5672"
+      - "15672:15672"
+      - "5672:5672"
+    environment:
+      RABBITMQ_DEFAULT_USER: ml-rabbitmq
+      RABBITMQ_DEFAULT_PASS: passwordpala
+    volumes:
+      - ./queueing-rabbitmq:/var/lib/rabbitmq
