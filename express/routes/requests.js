@@ -5,5 +5,6 @@ const cors = require('cors')
 const passport = require('passport')
 
 router.get('/:id', passport.authenticate('jwt', {session: false}),controller.list)
+router.post('/', controller.pushToQueue)
 
 module.exports = router
