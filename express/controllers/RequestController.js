@@ -15,16 +15,23 @@ const list = async (req, res) => {
 };
 
 const pushToQueue = async (req, res) => {
+  console.log(req.body)
   publish(
     "",
     "processing.requests",
     new Buffer.from(
       JSON.stringify({
-        id: req.body.projectId
+        projectId: req.body.projectId,
+        documents: req.body.documents
       })
     )
   );
   res.send("ok");
 }
 
-module.exports = { list, pushToQueue };
+const handleProcessStatus = async (req, res) => {
+  console.log(req.body)
+  res.send("ok")
+}
+
+module.exports = { list, pushToQueue, handleProcessStatus };

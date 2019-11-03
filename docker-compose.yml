@@ -1,4 +1,4 @@
-version: '3.3'
+version: '3.5'
 services:
 
   # Nginx Reverse Proxy
@@ -10,6 +10,8 @@ services:
       - "9229:9229"
     volumes:
       - ./docker/nginx/:/etc/nginx/conf.d/
+    networks: 
+      - queueing_link
 
   # Express
   express:
@@ -20,6 +22,8 @@ services:
       - ./express:/app
       - /app/node_modules
     command: npm run dev
+    networks: 
+      - queueing_link
   
   # Database
   db:
@@ -35,6 +39,8 @@ services:
       MYSQL_PASSWORD: whateverItworks
       MYSQL_ROOT_PASSWORD: example
       MYSQL_DATABASE: queueing
+    networks: 
+      - queueing_link
   
   # adminer
   adminer:
@@ -43,6 +49,8 @@ services:
     restart: always
     ports:
       - 8081:8080
+    networks: 
+      - queueing_link
 
   # RabbitMQ
   rabbitmq:
@@ -58,3 +66,9 @@ services:
       RABBITMQ_DEFAULT_PASS: passwordpala
     volumes:
       - ./queueing-rabbitmq:/var/lib/rabbitmq
+    networks: 
+      - queueing_link
+
+networks:
+  queueing_link:
+    name: Queueing_Link
