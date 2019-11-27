@@ -1,7 +1,7 @@
-const express = require("express");
-const Request = require("../models").Request;
-const Text = require("../models").Text;
-const publish = require("../rabbitmq").publish;
+const express = require("express")
+const Request = require("../models").Request
+const Text = require("../models").Text
+const publish = require("../rabbitmq").publish
 
 const list = async (req, res) => {
   const payload = await Request.findAll({
@@ -10,9 +10,9 @@ const list = async (req, res) => {
       model: Text,
       as: "texts"
     }
-  });
-  res.send(payload);
-};
+  })
+  res.send(payload)
+}
 
 const pushToQueue = async (req, res) => {
   console.log(req.body)
@@ -25,8 +25,8 @@ const pushToQueue = async (req, res) => {
         documents: req.body.documents
       })
     )
-  );
-  res.send("ok");
+  )
+  res.send("ok")
 }
 
 const handleProcessStatus = async (req, res) => {
@@ -34,4 +34,4 @@ const handleProcessStatus = async (req, res) => {
   res.send("ok")
 }
 
-module.exports = { list, pushToQueue, handleProcessStatus };
+module.exports = { list, pushToQueue, handleProcessStatus }
