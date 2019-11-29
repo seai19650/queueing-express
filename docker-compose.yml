@@ -12,6 +12,8 @@ services:
       - ./docker/nginx/:/etc/nginx/conf.d/
     networks: 
       - queueing_link
+    depends_on:
+      - express
 
   # Express
   express:

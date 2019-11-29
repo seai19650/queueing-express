@@ -1,17 +1,14 @@
 'use strict';
 module.exports = {
   up: (queryInterface, Sequelize) => {
-    return queryInterface.createTable('Texts', {
+    return queryInterface.createTable('Progresses', {
       id: {
         allowNull: false,
         autoIncrement: true,
         primaryKey: true,
         type: Sequelize.INTEGER
       },
-      path: {
-        type: Sequelize.STRING
-      },
-      perspective: {
+      status: {
         type: Sequelize.STRING
       },
       requestId: {
@@ -33,6 +30,6 @@ module.exports = {
     });
   },
   down: (queryInterface, Sequelize) => {
-    return queryInterface.dropTable('Texts');
+    return queryInterface.dropTable('Progresses');
   }
 };

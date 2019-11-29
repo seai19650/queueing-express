@@ -5,7 +5,7 @@ start:
 	docker-compose up -d
 
 log:
-	docker-compose logs -f
+	docker-compose logs -f express
 
 stop:
 	docker-compose down

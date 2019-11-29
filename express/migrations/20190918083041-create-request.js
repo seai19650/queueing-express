@@ -8,13 +8,10 @@ module.exports = {
         primaryKey: true,
         type: Sequelize.INTEGER
       },
-      brand: {
+      clientId: {
         type: Sequelize.STRING
       },
-      series: {
-        type: Sequelize.STRING
-      },
-      year: {
+      documents: {
         type: Sequelize.STRING
       },
       createdAt: {

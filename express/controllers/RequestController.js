@@ -2,6 +2,7 @@ const express = require("express")
 const Request = require("../models").Request
 const Text = require("../models").Text
 const publish = require("../rabbitmq").publish
+const io = require("../io").getio()
 
 const list = async (req, res) => {
   const payload = await Request.findAll({
@@ -31,6 +32,9 @@ const pushToQueue = async (req, res) => {
 
 const handleProcessStatus = async (req, res) => {
   console.log(req.body)
+  io.on('connection', (socket) => {
+    socket.emit('progress', {payload: req.body})
+  })
   res.send("ok")
 }
 

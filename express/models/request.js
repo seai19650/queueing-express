@@ -6,9 +6,9 @@ module.exports = (sequelize, DataTypes) => {
     year: DataTypes.STRING
   }, {})
   Request.associate = function(models) {
-    Request.hasMany(models.Text, {
+    Request.hasMany(models.Progress, {
       foreignKey: 'requestId',
-      as: 'texts'
+      as: 'progresses'
     })
   }
   return Request
