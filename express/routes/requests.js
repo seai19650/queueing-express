@@ -6,6 +6,6 @@ const passport = require('passport')
 
 router.get('/:id', passport.authenticate('jwt', {session: false}),controller.list)
 router.post('/', controller.pushToQueue)
-router.post('/process', controller.handleProcessStatus)
+router.post('/progress', controller.handleProgressStatus)
 
 module.exports = router

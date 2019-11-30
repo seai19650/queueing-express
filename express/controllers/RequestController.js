@@ -30,12 +30,10 @@ const pushToQueue = async (req, res) => {
   res.send("ok")
 }
 
-const handleProcessStatus = async (req, res) => {
+const handleProgressStatus = async (req, res) => {
   console.log(req.body)
-  io.on('connection', (socket) => {
-    socket.emit('progress', {payload: req.body})
-  })
+  io.emit('progress', {payload: req.body})
   res.send("ok")
 }
 
-module.exports = { list, pushToQueue, handleProcessStatus }
+module.exports = { list, pushToQueue, handleProgressStatus }
