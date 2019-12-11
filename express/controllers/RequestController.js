@@ -1,6 +1,7 @@
 const express = require("express")
 const Request = require("../models").Request
-const Text = require("../models").Text
+const Progress = require("../models").Progress
+const Result = require("../models").Result
 const publish = require("../rabbitmq").publish
 const io = require("../io").getio()
 
@@ -16,24 +17,44 @@ const list = async (req, res) => {
 }
 
 const pushToQueue = async (req, res) => {
-  console.log(req.body)
-  publish(
-    "",
-    "processing.requests",
-    new Buffer.from(
-      JSON.stringify({
-        projectId: req.body.projectId,
-        documents: req.body.documents
-      })
+  newRequest = {
+    clientId: req.body.cliendId,
+    documents: req.body.documents
+  }
+  Request.create(newRequest).then(request => {
+    publish(
+      "",
+      "processing.requests",
+      new Buffer.from(
+        JSON.stringify({
+          id: request.id,
+          documents: request.documents
+        })
+      )
     )
-  )
+  })
   res.send("ok")
 }
 
 const handleProgressStatus = async (req, res) => {
-  console.log(req.body)
-  io.emit('progress', {payload: req.body})
-  res.send("ok")
+  console.log("== Progress Update from "+  req.body.id +" said : " + req.body.status)
+  newProgress = {
+    status: req.body.status,
+    requestId: req.body.id
+  }
+  emitPayload = Object.assign({},req.body)
+  if (req.files) {
+    Result.create({
+      requestId: req.body.id,
+      filename: req.files[0].filename
+    })
+    emitPayload.filename = req.files[0].filename
+  }
+  if (req.body.keep === 'True') {
+    Progress.create(newProgress)
+  }
+  io.emit('progress', {payload: emitPayload})
+  res.status(200).send()
 }
 
 module.exports = { list, pushToQueue, handleProgressStatus }

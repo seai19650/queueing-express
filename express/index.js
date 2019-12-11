@@ -20,9 +20,11 @@ require("./passport.js")
 // Routing Logic
 const requests = require("./routes/requests")
 const auth = require("./routes/auth")
+const result = require("./routes/results")
 
 app.use("/request", requests)
 app.use("/auth", auth)
+app.use("/result", result)
 
 http.listen(3000, '0.0.0.0', () => {
     db.sequelize.sync()
