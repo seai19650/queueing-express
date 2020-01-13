@@ -1,7 +1,7 @@
 'use strict';
 module.exports = (sequelize, DataTypes) => {
   const Request = sequelize.define('Request', {
-    clientId: DataTypes.STRING,
+    projectId: DataTypes.STRING,
     documents: DataTypes.STRING
   }, {})
   Request.associate = function(models) {

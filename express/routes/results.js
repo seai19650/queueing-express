@@ -4,6 +4,6 @@ const controller = require('../controllers/ResultController')
 const cors = require('cors')
 const passport = require('passport')
 
-router.get('/:filename', controller.getResultFile)
+router.get('/:fileIdentity', controller.getResultFile)
 
 module.exports = router

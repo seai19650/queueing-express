@@ -17,8 +17,10 @@ var storage = multer.diskStorage({
 
 var upload = multer({storage: storage})
 
-router.get('/:id', passport.authenticate('jwt', {session: false}),controller.list)
+router.get('/:projectId', controller.getRequestByProjectId)
 router.post('/', controller.pushToQueue)
+
+router.get('/progress', controller.getLatestProgresses)
 router.post('/progress', upload.array('file'), controller.handleProgressStatus)
 
 module.exports = router

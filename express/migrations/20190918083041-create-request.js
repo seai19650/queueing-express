@@ -8,8 +8,9 @@ module.exports = {
         primaryKey: true,
         type: Sequelize.INTEGER
       },
-      clientId: {
-        type: Sequelize.STRING
+      projectId: {
+        type: Sequelize.STRING,
+        unique: true
       },
       documents: {
         type: Sequelize.TEXT
