@@ -14,16 +14,15 @@ app.use(cors({
     credentials: true,
 }))
 
-// Authentication Logic
-require("./passport.js")
-
 // Routing Logic
 const requests = require("./routes/requests")
-const auth = require("./routes/auth")
 const result = require("./routes/results")
 
+app.get("/", function(req, res) {
+    return res.send("Proxy API Server")
+})
+
 app.use("/request", requests)
-app.use("/auth", auth)
 app.use("/result", result)
 
 http.listen(3000, '0.0.0.0', () => {

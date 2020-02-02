@@ -1,5 +1,3 @@
-queueing-db/
-queueing-rabbitmq/
-.DS_Store
+ .DS_Store
 node_modules/
-express/outputs
+outputs/

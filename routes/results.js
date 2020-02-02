@@ -5,5 +5,6 @@ const cors = require('cors')
 const passport = require('passport')
 
 router.get('/:fileIdentity', controller.getResultFile)
+router.delete('/:projectId', controller.deleteResultFile)
 
 module.exports = router
