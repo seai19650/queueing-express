@@ -8,7 +8,13 @@ const getResultFile = async (req, res) => {
     /** 
      * Search By Filename 
      * */
-    isFileExisted(req.params.fileIdentity)
+    if (fs.existsSync(`${__dirname}/../outputs/${req.params.fileIdentity}`)) {
+      res.sendFile(req.params.fileIdentity, { root: __dirname + '/../outputs/' })
+    } else {
+      res.status(404).json({
+        status: `This file(${req.params.fileIdentity}) does not exist on the server.`
+      })
+    }
   } else {
     /** 
      * Search By projectId 
@@ -21,7 +27,7 @@ const getResultFile = async (req, res) => {
       }
     }).then(request => {
       if (request !== null) {
-        res.sendFile(request.result.filename, { root: __dirname + '../../outputs/' })
+        res.sendFile(request.result.filename, { root: __dirname + '/../outputs/' })
       } else {
         res.status(404).json({
           projectId: req.params.fileIdentity,
@@ -46,16 +52,6 @@ const deleteResultFile = async (req, res) => {
       })
     })
   })
-}
-
-function isFileExisted (filename) {
-  if (fs.existsSync(`${__dirname}../../outputs/${filename}`)) {
-    res.sendFile(filename, { root: __dirname + '../../outputs/' })
-  } else {
-    res.status(404).json({
-      status: `This file(${request.params.fileIdentity}) does not exist on the server.`
-    })
-  }
 }
 
 module.exports = {

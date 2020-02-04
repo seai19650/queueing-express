@@ -10,19 +10,21 @@ const io = require('./io').init(http)
 app.use(bodyParser.json({limit: '10mb', extended: true}))
 app.use(bodyParser.urlencoded({limit: '10mb', extended: true}))
 app.use(cors({
-    origin: 'http://localhost:3000',
+    origin: 'http://queueing-frontend:3000',
     credentials: true,
 }))
 
 // Routing Logic
 const requests = require("./routes/requests")
+const progresses = require("./routes/progresses")
 const result = require("./routes/results")
 
 app.get("/", function(req, res) {
-    return res.send("Proxy API Server")
+    return res.send("Proxy API Server Container")
 })
 
 app.use("/request", requests)
+app.use("/progress", progresses)
 app.use("/result", result)
 
 http.listen(3000, '0.0.0.0', () => {
@@ -32,5 +34,9 @@ http.listen(3000, '0.0.0.0', () => {
 
 // Socket.io
 io.on('connection', (socket) => {
+    console.log("[Socket.io] Launch")
     socket.emit('system', {message: 'Hi, Server is talking'})
+    socket.on('message', function(data) {
+        console.log(data)
+    })
 })

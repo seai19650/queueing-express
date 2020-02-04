@@ -2,7 +2,7 @@
 module.exports = (sequelize, DataTypes) => {
   const Request = sequelize.define('Request', {
     projectId: DataTypes.STRING,
-    documents: DataTypes.STRING
+    documents: DataTypes.TEXT
   }, {})
   Request.associate = function(models) {
     Request.hasMany(models.Progress, {

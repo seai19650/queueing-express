@@ -6,8 +6,6 @@ const Result = require("../models").Result
 const publish = require("../rabbitmq").publish
 const io = require("../io").getio()
 
-let latestProgresses = []
-
 const list = async (req, res) => {
   const payload = await Request.findAll({
     where: { id: req.params.id }
@@ -57,54 +55,8 @@ const pushToQueue = async (req, res) => {
   })
 }
 
-const handleProgressStatus = async (req, res) => {
-
-  console.log("== Progress Update from "+  req.body.id +" said : " + req.body.status + " ==")
-  
-  // make new progress payload
-  newProgress = {
-    requestId: req.body.id,
-    status: req.body.status
-  }
-
-  // make payload for ws
-  emitPayload = Object.assign({},req.body)
-
-  // check if it's file or not
-  if (req.files) {
-    Result.create({
-      requestId: req.body.id,
-      filename: req.files[0].filename
-    })
-    emitPayload.filename = req.files[0].filename
-  }
-  
-  // check if this progress needs to be stored in the database
-  if (req.body.keep === 'True') {
-    Progress.create(newProgress)
-  }
-
-  // send data to ws
-  io.emit('progress', {payload: emitPayload})
-
-  // temporary store this progress in the latest progresses list
-  latestProgresses.push(emitPayload)
-  if (latestProgresses.length > 50) {
-    latestProgresses.shift()
-  }
-  
-  res.status(204).send()
-
-}
-
-const getLatestProgresses = async (req, res) => {
-  res.status(200).send(latestProgresses)
-}
-
 module.exports = { 
   list, 
-  pushToQueue, 
-  handleProgressStatus, 
-  getLatestProgresses, 
+  pushToQueue,
   getRequestByProjectId 
 }
