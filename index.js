@@ -18,6 +18,8 @@ app.use(cors({
 const requests = require("./routes/requests")
 const progresses = require("./routes/progresses")
 const result = require("./routes/results")
+const history = require("./routes/histories")
+const queue = require("./routes/queues")
 
 app.get("/", function(req, res) {
     return res.send("Proxy API Server Container")
@@ -26,6 +28,8 @@ app.get("/", function(req, res) {
 app.use("/request", requests)
 app.use("/progress", progresses)
 app.use("/result", result)
+app.use("/history", history)
+app.use("/queue", queue)
 
 http.listen(3000, '0.0.0.0', () => {
     db.sequelize.sync()

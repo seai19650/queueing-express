@@ -30,29 +30,46 @@ const pushToQueue = async (req, res) => {
   // make new request payload
   let newRequest = {
     projectId: req.body.projectId,
-    documents: req.body.documents
+    documents: req.body.documents.toString()
   }
-  // store this new request into database
-  Request.create(newRequest).then(request => {
-    publish("","processing.requests",
-      new Buffer.from(
-        JSON.stringify({
-          id: request.id,
-          documents: request.documents
-        })
+
+  if (isDocumentFieldIsValid(req.body.documents)) {
+    // store this new request into database
+    Request.create(newRequest).then(request => {
+      publish("","processing.requests",
+          new Buffer.from(
+              JSON.stringify({
+                id: request.id,
+                documents: request.documents
+              })
+          )
       )
-    )
-    // send feedback
-    res.status(201).json({
-      projectId: req.body.projectId,
-      id:request.id
+      // send feedback
+      res.status(201).json({
+        projectId: req.body.projectId,
+        id:request.id
+      })
+    }).catch(Sequelize.UniqueConstraintError , error => {
+      res.status(409).json({
+        projectId: req.body.projectId,
+        status: `projectId(${req.body.projectId}) is not unique based on the API System.`
+      })
     })
-  }).catch(Sequelize.UniqueConstraintError , error => {
-    res.status(409).json({
+  } else {
+    res.status(400).json({
       projectId: req.body.projectId,
-      status: `projectId(${req.body.projectId}) is not unique based on the API System.`
+      status: 'Documents must formed in the array format.'
     })
-  })
+  }
+}
+
+function isDocumentFieldIsValid (documents) {
+  try {
+    console.log(JSON.parse(documents.replace(/'/g, '"')))
+  } catch (e) {
+    return false
+  }
+  return true
 }
 
 module.exports = { 

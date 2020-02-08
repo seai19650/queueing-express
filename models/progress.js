@@ -5,7 +5,12 @@ module.exports = (sequelize, DataTypes) => {
   }, {});
   Progress.associate = function(models) {
     Progress.belongsTo(models.Request, {
-      foreignKey: 'requestId'
+      foreignKey: 'requestId',
+      as: 'request'
+    })
+    Progress.belongsTo(models.Result, {
+      foreignKey: 'requestId',
+      as: 'result'
     })
   };
   return Progress;
