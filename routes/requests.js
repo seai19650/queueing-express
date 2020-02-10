@@ -2,7 +2,9 @@ const express = require('express')
 const router = express.Router()
 const controller = require('../controllers/RequestController')
 
-router.get('/:projectId', controller.getRequestByProjectId)
+const authMiddleware = require('../middlewares/auth')
+
+router.get('/:projectId', authMiddleware.requireJwtAuthentication, controller.getRequestByProjectId)
 router.post('/', controller.pushToQueue)
 
 module.exports = router

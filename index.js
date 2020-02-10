@@ -15,6 +15,7 @@ app.use(cors({
 }))
 
 // Routing Logic
+const auth = require("./routes/auth")
 const requests = require("./routes/requests")
 const progresses = require("./routes/progresses")
 const result = require("./routes/results")
@@ -25,6 +26,7 @@ app.get("/", function(req, res) {
     return res.send("Proxy API Server Container")
 })
 
+app.use("/auth", auth)
 app.use("/request", requests)
 app.use("/progress", progresses)
 app.use("/result", result)

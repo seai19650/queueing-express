@@ -25,13 +25,15 @@ const getQueue = async (req, res) => {
             if (error) {
                 res.status(500).send()
             } else {
-                if (body.length) {
+                if (body && body.length) {
                     body.map(task => {
                         task.payload = JSON.parse(task.payload)
                         task.payload.documents = JSON.parse(task.payload.documents)
                     })
                 }
-                res.status(200).json(body)
+                res.status(200).json({
+                    data: body
+                })
             }
         }
     )

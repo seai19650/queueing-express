@@ -44,6 +44,12 @@ const pushToQueue = async (req, res) => {
               })
           )
       )
+
+      io.emit('request', {
+        projectId: req.body.projectId,
+        id:request.id
+      })
+
       // send feedback
       res.status(201).json({
         projectId: req.body.projectId,

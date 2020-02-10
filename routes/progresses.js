@@ -6,6 +6,8 @@ const passport = require('passport')
 var multer  = require('multer')
 var path = require('path')
 
+const authMiddleware = require('../middlewares/auth')
+
 var storage = multer.diskStorage({
   destination: function (req, file, cb) {
     cb(null, 'outputs/')
@@ -17,7 +19,7 @@ var storage = multer.diskStorage({
 
 var upload = multer({storage: storage})
 
-router.get('/', controller.getLatestProgresses)
+router.get('/', authMiddleware.requireJwtAuthentication, controller.getLatestProgresses)
 router.post('/', upload.array('file'), controller.handleProgressStatus)
 
 

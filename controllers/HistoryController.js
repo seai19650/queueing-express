@@ -20,11 +20,14 @@ const getHistory = async (req, res) => {
         ],
         order: [
             ['createdAt', 'DESC'],
+            [{model: Progress, as: 'progresses'}, 'createdAt', 'DESC'],
             [{model: Request, as: 'request'}, 'createdAt', 'DESC']
         ]
     })
     results.map(result => result.request.documents = (JSON.parse(result.request.documents)))
-    res.status(200).json(results)
+    res.status(200).json({
+        data: results
+    })
 }
 
 module.exports = {

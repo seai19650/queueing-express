@@ -36,6 +36,10 @@ const handleProgressStatus = async (req, res) => {
   // send data to ws
   io.emit('progress', {payload: emitPayload})
 
+  if (emitPayload.status === 'complete') {
+    io.emit('history', {payload: emitPayload})
+  }
+
   // temporary store this progress in the latest progresses list
   latestProgresses[req.body.id] = emitPayload
   if (Object.keys(latestProgresses).length > 50) {
@@ -48,7 +52,13 @@ const handleProgressStatus = async (req, res) => {
 }
 
 const getLatestProgresses = async (req, res) => {
-  res.status(200).json(latestProgresses)
+  res.status(200).json({
+    data: Object.keys(latestProgresses)
+        .map(Number)
+        .sort()
+        .reverse()
+        .map(progressId => latestProgresses[progressId])
+  })
 }
 
 module.exports = { 
