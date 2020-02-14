@@ -1,11 +1,13 @@
 const express = require("express")
 const Sequelize = require('sequelize')
 const publish = require("../rabbitmq").publish
-const jsonwebtoken = require("jsonwebtoken")
+const jwt = require("jsonwebtoken")
+
+const redis = require("redis")
+const redisClient = require('../redis').getRedisClient()
+const randtoken = require('rand-token')
 
 const User = require("../models").User
-
-const jwt = require("jsonwebtoken")
 
 const SECRET = "DEMMY"
 
@@ -13,7 +15,7 @@ const doRegister = async (req, res) => {
     User.create({
         username: req.body.username,
         password: req.body.password,
-        is_admin: false
+        isAdmin: true
     }).then(user => {
         delete user.password
         res.status(201).json(user)
@@ -24,18 +26,23 @@ const doLogin = async (req, res) => {
     const payload = {
         sub: req.body.username,
         iat: new Date().getTime(),
-        is_admin: req.userData.is_admin
+        isAdmin: req.userData.isAdmin
     }
+    let refreshToken = randtoken.uid(256)
+
+    redisClient.set(req.body.username, refreshToken, redis.print)
+
     res.status(200).json({
         username: req.body.username,
-        token: jwt.sign(payload, SECRET)
+        token: jwt.sign(payload, SECRET, {expiresIn: '30m'}),
+        refreshToken: refreshToken
     })
 }
 
 const getUserData = async (req, res) => {
     res.status(200).json({
         user: {
-            username: req.body.username
+            username: jwt.decode(req.headers.authorization.split(" ")[1], SECRET)['sub'],
         }
     })
 }

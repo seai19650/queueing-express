@@ -4,29 +4,39 @@ const Request = require("../models").Request
 const Progress = require("../models").Progress
 const Result = require("../models").Result
 const publish = require("../rabbitmq").publish
+const api = require("../api")
 
-const getHistory = async (req, res) => {
-    const results = await Result.findAll({
+const getHistory = (req, res) => {
+    Result.findAll({
         limit: 10,
         include: [
             {
                 model: Progress,
-                as: "progresses"
+                as: 'progresses'
             },
             {
                 model: Request,
-                as: "request"
+                as: 'request'
             }
         ],
         order: [
             ['createdAt', 'DESC'],
             [{model: Progress, as: 'progresses'}, 'createdAt', 'DESC'],
+            [{model: Progress, as: 'progresses'}, 'id', 'DESC'],
             [{model: Request, as: 'request'}, 'createdAt', 'DESC']
         ]
-    })
-    results.map(result => result.request.documents = (JSON.parse(result.request.documents)))
-    res.status(200).json({
-        data: results
+    }).then(results => {
+        results.forEach(result => {
+            result = result.get({plain:true})
+            result.request.documents = (JSON.parse(result.request.documents))
+            result.progresses.forEach(progress => {
+                progress.status = api.getStatusMessage(progress.statusCode, progress.payload.split(","))
+                delete progress.payload
+            })
+        })
+        res.status(200).json({
+            data: results
+        })
     })
 }
 

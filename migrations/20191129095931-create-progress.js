@@ -8,7 +8,10 @@ module.exports = {
         primaryKey: true,
         type: Sequelize.INTEGER
       },
-      status: {
+      statusCode: {
+        type: Sequelize.STRING
+      },
+      payload: {
         type: Sequelize.STRING
       },
       requestId: {

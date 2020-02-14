@@ -7,6 +7,9 @@ const app = express()
 const http = require('http').createServer(app)
 const io = require('./io').init(http)
 
+const redis = require('redis')
+const redisClient = require('./redis').init(redis)
+
 app.use(bodyParser.json({limit: '10mb', extended: true}))
 app.use(bodyParser.urlencoded({limit: '10mb', extended: true}))
 app.use(cors({

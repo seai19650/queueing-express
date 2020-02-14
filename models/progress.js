@@ -1,7 +1,8 @@
 'use strict';
 module.exports = (sequelize, DataTypes) => {
   const Progress = sequelize.define('Progress', {
-    status: DataTypes.STRING
+    statusCode: DataTypes.STRING,
+    payload: DataTypes.STRING
   }, {});
   Progress.associate = function(models) {
     Progress.belongsTo(models.Request, {

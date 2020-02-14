@@ -45,6 +45,12 @@ const pushToQueue = async (req, res) => {
           )
       )
 
+      Progress.create({
+        requestId: request.id,
+        statusCode: "000",
+        payload: request.id,
+      })
+
       io.emit('request', {
         projectId: req.body.projectId,
         id:request.id

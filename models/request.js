@@ -7,11 +7,15 @@ module.exports = (sequelize, DataTypes) => {
   Request.associate = function(models) {
     Request.hasMany(models.Progress, {
       foreignKey: 'requestId',
-      as: 'progresses'
+      as: 'progresses',
+      onDelete: 'SET NULL',
+      onUpdate: 'CASCADE'
     })
     Request.hasOne(models.Result, {
       foreignKey: 'requestId',
-      as: 'result'
+      as: 'result',
+      onDelete: 'SET NULL',
+      onUpdate: 'CASCADE'
     })
   }
   return Request

@@ -9,8 +9,11 @@ module.exports = (sequelize, DataTypes) => {
       as: 'request'
     })
     Result.hasMany(models.Progress, {
+      sourceKey: 'requestId',
       foreignKey: 'requestId',
-      as: 'progresses'
+      as: 'progresses',
+      onDelete: 'SET NULL',
+      onUpdate: 'CASCADE'
     })
   };
   return Result;

@@ -1,4 +1,5 @@
 const User = require("../models").User
+const JwtExtract = require("passport-jwt").ExtractJwt
 
 const requireLoginAuthentication = (req, res, next) => {
     User.findOne({
@@ -26,8 +27,10 @@ const requireLoginAuthentication = (req, res, next) => {
     })
 }
 
-const requireJwtAuthentication = (req, res, next) => require("../passport")
-    .authenticate("jwt", {session: false})(req, res, next)
+const requireJwtAuthentication = (req, res, next) => {
+    return require("../passport")
+        .authenticate("jwt", {session: false})(req, res, next);
+}
 
 module.exports = {
     requireLoginAuthentication,

@@ -17,7 +17,7 @@ module.exports = {
         type: Sequelize.STRING,
         allowNull: false
       },
-      is_admin: {
+      isAdmin: {
         type: Sequelize.BOOLEAN,
         defaultValue: false
       },
