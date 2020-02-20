@@ -13,7 +13,7 @@ const redisClient = require('./redis').init(redis)
 app.use(bodyParser.json({limit: '10mb', extended: true}))
 app.use(bodyParser.urlencoded({limit: '10mb', extended: true}))
 app.use(cors({
-    origin: 'http://queueing-frontend:3000',
+    origin: '*',
     credentials: true,
 }))
 

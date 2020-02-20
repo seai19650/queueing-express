@@ -3,7 +3,7 @@ module.exports = {
     init: function(http) {
         // start socket.io server and cache io value
         io = require('socket.io')(http, {
-          origins: 'http://localhost:8080',
+        //   origins: 'http://localhost:8080',
           transports: ['websocket']
         })
         return io

@@ -3,7 +3,7 @@ const amqp = require("amqplib/callback_api")
 let amqpConn = null
 
 function start() {
-  amqp.connect("amqp://rabbitmq-cn:connectme@queueing-rabbitmq", function(
+  amqp.connect(`amqp://rabbitmq-cn:connectme@${process.env.RABBITMQ_HOST || 'queueing-rabbitmq'}`, function(
     err,
     conn
   ) {
