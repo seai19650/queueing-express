@@ -3,7 +3,7 @@ module.exports = {
     init: function(redis) {
         // start socket.io server and cache io value
         redisClient = redis.createClient({
-            host: 'queueing-redis'
+            host: process.env.REDIS_HOST || 'queueing-redis'
         })
 
         redisClient.on("error", function(error) {
