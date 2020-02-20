@@ -25,12 +25,12 @@ const doRegister = async (req, res) => {
 const doLogin = async (req, res) => {
     const payload = {
         sub: req.body.username,
-        iat: new Date().getTime(),
+        iat: new Date().getTime()/1000,
         isAdmin: req.userData.isAdmin
     }
     let refreshToken = randtoken.uid(256)
 
-    redisClient.set(req.body.username, refreshToken, redis.print)
+    redisClient.set(req.body.username, refreshToken)
 
     res.status(200).json({
         username: req.body.username,

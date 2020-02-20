@@ -6,7 +6,10 @@
     "host": "queueing-db",
     "dialect": "mariadb",
     "dialectOptions": {
-      "timezone": "Etc/GMT+7"
-    }
+      "dateStrings": true,
+      "typeCast": true,
+      "timezone": "+07:00"
+    },
+    "timezone": "+07:00"
   }
 }

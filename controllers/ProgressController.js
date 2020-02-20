@@ -15,8 +15,7 @@ const handleProgressStatus = async (req, res) => {
         req.body.payload = [req.body.payload]
     }
 
-    console.log(`== Progress Update from ${req.body.id} : ${req.body.code} ==`)
-    console.log(api.getStatusMessage(req.body.code, req.body.payload))
+    console.log(` ==> [${req.body.id}] : ${req.body.code} "${api.getStatusMessage(req.body.code, req.body.payload)}"`)
 
     let progress = {
         requestId: req.body.id,
@@ -45,7 +44,6 @@ const handleProgressStatus = async (req, res) => {
     // temporary store this progress in the latest progresses list
     latestProgresses[req.body.id] = progress
     if (Object.keys(latestProgresses).length > 50) {
-        console.log("Progress Temp Shift")
         delete latestProgresses[Object.keys(latestProgresses).map(Number).sort()[0]]
     }
 
