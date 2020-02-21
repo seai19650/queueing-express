@@ -3,7 +3,7 @@
     "username": "queueing-access",
     "password": "whateverItworks",
     "database": "queueing",
-    "host": "queueing-db",
+    "host": "mariadb-cluster-ip-service",
     "dialect": "mariadb",
     "dialectOptions": {
       "dateStrings": true,
