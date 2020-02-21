@@ -20,7 +20,7 @@ env:
   GKE_PROJECT: ${{ secrets.GKE_PROJECT }}
   GKE_EMAIL: ${{ secrets.GKE_EMAIL }}
   GITHUB_SHA: ${{ github.sha }}
-  GKE_ZONE: us-west1-a
+  GKE_ZONE: asia-southeast1
   GKE_CLUSTER: queueing-cluster
   IMAGE: queueing-express
   REGISTRY_HOSTNAME: gcr.io
