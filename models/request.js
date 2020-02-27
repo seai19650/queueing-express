@@ -3,7 +3,7 @@ module.exports = (sequelize, DataTypes) => {
   const Request = sequelize.define('Request', {
     projectId: DataTypes.STRING,
     documents: DataTypes.TEXT
-  }, {})
+  }, {charset: 'utf8mb4'})
   Request.associate = function(models) {
     Request.hasMany(models.Progress, {
       foreignKey: 'requestId',

@@ -31,6 +31,7 @@ const getStatusMessage = (id, payload) => {
         '011': "preparing document{}",
         '020': "downloading request's resources",
         '021': '{} is being downloaded',
+        '022': "{} is being converted",
         '030': "converting request's resources",
         '031': "​​converting {} document{}",
         '040': "threading",
@@ -46,6 +47,9 @@ const getStatusMessage = (id, payload) => {
         '130': "creating bag of words",
         '140': "modeling",
         '150': "cleaning environment",
+        '160': "evaluating model",
+        '170': 'exporting to html format',
+        '180': 'converting exported html to Thai',
 
         '410': "{} is not downloadable",
 

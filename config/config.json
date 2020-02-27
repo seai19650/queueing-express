@@ -3,13 +3,28 @@
     "username": "queueing-access",
     "password": "whateverItworks",
     "database": "queueing",
+    "host": "queueing-db",
+    "dialect": "mariadb",
+    "dialectOptions": {
+      "charset": "utf8mb4",
+      "dateStrings": true,
+      "typeCast": true,
+      "timezone": "Etc/GMT-7"
+    },
+    "timezone": "Etc/GMT-7"
+  },
+  "k8s-development": {
+    "username": "queueing-access",
+    "password": "whateverItworks",
+    "database": "queueing",
     "host": "mariadb-cluster-ip-service",
     "dialect": "mariadb",
     "dialectOptions": {
+      "charset": "utf8mb4",
       "dateStrings": true,
       "typeCast": true,
-      "timezone": "+07:00"
+      "timezone": "Etc/GMT-7"
     },
-    "timezone": "+07:00"
+    "timezone": "Etc/GMT-7"
   }
 }

@@ -7,6 +7,13 @@ const publish = require("../rabbitmq").publish
 const request = require("request")
 
 const getQueue = async (req, res) => {
+
+    if (process.env.RABBITMQ_HOST) {
+        rabbitmq_url = `${process.env.RABBITMQ_HOST}:15672`
+    } else {
+        rabbitmq_url = "queueing-rabbitmq:15672"
+    }
+
     request.post(
         {
             auth: {
@@ -17,7 +24,7 @@ const getQueue = async (req, res) => {
             headers: {
                 'content-type': 'application/json'
             },
-            url: 'http://queueing-rabbitmq:15672/api/queues/%2f/processing.requests/get',
+            url: `http://${rabbitmq_url}/api/queues/%2f/processing.requests/get`,
             body: {"count": 5, "requeue": true, "encoding": "auto", "truncate": 50000, "ackmode": "ack_requeue_true"},
             json: true
         },
