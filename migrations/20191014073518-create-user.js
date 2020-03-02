@@ -17,15 +17,15 @@ module.exports = {
         type: Sequelize.STRING,
         allowNull: false
       },
-      isAdmin: {
+      is_admin: {
         type: Sequelize.BOOLEAN,
         defaultValue: false
       },
-      createdAt: {
+      created_at: {
         allowNull: false,
         type: Sequelize.DATE
       },
-      updatedAt: {
+      updated_at: {
         allowNull: false,
         type: Sequelize.DATE
       }

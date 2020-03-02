@@ -35,7 +35,7 @@ const getStatusMessage = (id, payload) => {
         '030': "converting request's resources",
         '031': "​​converting {} document{}",
         '040': "threading",
-        '050': "end thread",
+        '050': "complete exporting file in {} language",
 
         '110': "input dataset",
         '111': "input dataset from {}",
@@ -51,13 +51,17 @@ const getStatusMessage = (id, payload) => {
         '170': 'exporting to html format',
         '180': 'converting exported html to Thai',
 
+        "190": "pushing result to API",
+        "191": "pushing files",
+        "192": "pushing result",
+
         '410': "{} is not downloadable",
 
         '510': "input dataset failed on document {}"
     }
 
     if (!statuses[id]) {
-        message = "Unknown Code"
+        message = `Unknown Code ${id}`
     } else {
         if (payload.length > 0 && payload[0] !== "") {
             message = statuses[id].format(...payload)

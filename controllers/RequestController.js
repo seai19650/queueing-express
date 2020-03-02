@@ -16,65 +16,79 @@ const list = async (req, res) => {
 
 const getRequestByProjectId = (req, res) => {
     Request.findOne({
-        where: {projectId: req.params.projectId},
+        where: {project_id: req.params.project_id},
         include: [
             {
                 model: Progress,
                 as: "progresses"
+            },
+            {
+                model: Result,
+                as: "result"
             }
         ]
     }).then(targetedRequest => {
         targetedRequest = targetedRequest.get({plain:true})
         targetedRequest.documents = JSON.parse(targetedRequest.documents)
         targetedRequest.progresses.map(progress => {
-            progress['status'] = api.getStatusMessage(progress['statusCode'], progress['payload'])
+            progress['status'] = api.getStatusMessage(progress['status_code'], progress['payload'])
             delete progress['payload']
+        })
+        let resultToJson = ['term_topic_matrix', 'document_topic_matrix', 'topic_stat', 'term_pairs', 'unreadable_documents']
+        resultToJson.forEach(key => {
+            targetedRequest.result[key] = JSON.parse(targetedRequest.result[key])
         })
         res.status(200).json(targetedRequest)
     })
 }
 
 const pushToQueue = async (req, res) => {
-    // make new request payload
+
+    // Make new request payload
     let newRequest = {
-        projectId: req.body.projectId,
+        project_id: req.body.project_id,
+        project_name: req.body.project_name,
         documents: req.body.documents.toString()
     }
 
-    // store this new request into database
+    // Store this new request into database
     Request.create(newRequest).then(request => {
 
+        // Sent To RabbitMQ
         publish("", "processing.requests",
             new Buffer.from(
                 JSON.stringify({
                     id: request.id,
-                    projectId: request.projectId,
+                    project_id: request.project_id,
+                    project_name: request.project_name,
                     documents: request.documents,
                     max_no_topic: req.body.max_no_topic
                 })
             )
         )
 
+        // Make the first progress
         Progress.create({
-            requestId: request.id,
-            statusCode: "000",
+            request_id: request.id,
+            status_code: "000",
             payload: request.id,
         })
 
+        // Notify Panel about change
         io.emit('request', {
-            projectId: req.body.projectId,
+            project_id: req.body.project_id,
             id: request.id
         })
 
         // send feedback
         res.status(201).json({
-            projectId: req.body.projectId,
+            project_id: req.body.project_id,
             id: request.id
         })
     }).catch(Sequelize.UniqueConstraintError, error => {
         res.status(409).json({
-            projectId: req.body.projectId,
-            status: `projectId(${req.body.projectId}) is not unique based on the API System.`
+            project_id: req.body.project_id,
+            status: `project_id(${req.body.project_id}) is not unique based on the API System.`
         })
     })
 }

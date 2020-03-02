@@ -20,7 +20,7 @@ var storage = multer.diskStorage({
 var upload = multer({storage: storage})
 
 router.get('/', authMiddleware.requireJwtAuthentication, controller.getLatestProgresses)
-router.post('/', upload.array('file'), controller.handleProgressStatus)
+router.post('/', upload.array('resultFile',2), controller.handleProgressStatus)
 
 
 module.exports = router

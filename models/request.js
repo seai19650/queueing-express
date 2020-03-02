@@ -1,18 +1,24 @@
 'use strict';
 module.exports = (sequelize, DataTypes) => {
   const Request = sequelize.define('Request', {
-    projectId: DataTypes.STRING,
+    project_id: DataTypes.STRING,
+    project_name: DataTypes.STRING,
     documents: DataTypes.TEXT
-  }, {charset: 'utf8mb4'})
+  }, {
+    charset: 'utf8mb4',
+    underscored: true,
+    freezeTableName: true,
+    tableName: 'Requests'
+  })
   Request.associate = function(models) {
     Request.hasMany(models.Progress, {
-      foreignKey: 'requestId',
+      foreignKey: 'request_id',
       as: 'progresses',
       onDelete: 'SET NULL',
       onUpdate: 'CASCADE'
     })
     Request.hasOne(models.Result, {
-      foreignKey: 'requestId',
+      foreignKey: 'request_id',
       as: 'result',
       onDelete: 'SET NULL',
       onUpdate: 'CASCADE'

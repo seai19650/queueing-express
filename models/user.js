@@ -6,8 +6,13 @@ module.exports = (sequelize, DataTypes) => {
   const User = sequelize.define('User', {
     username: DataTypes.STRING,
     password: DataTypes.STRING,
-    isAdmin: DataTypes.BOOLEAN
-  }, {charset: 'utf8mb4'});
+    is_admin: DataTypes.BOOLEAN
+  }, {
+    charset: 'utf8mb4',
+    underscored: true,
+    freezeTableName: true,
+    tableName: 'Users'
+  });
   User.associate = function(models) {
     // associations can be defined here
   };

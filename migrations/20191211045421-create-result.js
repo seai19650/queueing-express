@@ -8,10 +8,22 @@ module.exports = {
         primaryKey: true,
         type: Sequelize.INTEGER
       },
-      filename: {
-        type: Sequelize.STRING
+      term_topic_matrix: {
+        type: Sequelize.TEXT
       },
-      requestId: {
+      document_topic_matrix: {
+        type: Sequelize.TEXT
+      },
+      topic_stat: {
+        type: Sequelize.TEXT
+      },
+      term_pairs: {
+        type: Sequelize.TEXT
+      },
+      unreadable_documents: {
+        type: Sequelize.TEXT
+      },
+      request_id: {
         type: Sequelize.INTEGER,
         allowNull: false,
         references: {
@@ -19,11 +31,11 @@ module.exports = {
           key: 'id'
         },
       },
-      createdAt: {
+      created_at: {
         allowNull: false,
         type: Sequelize.DATE
       },
-      updatedAt: {
+      updated_at: {
         allowNull: false,
         type: Sequelize.DATE
       }

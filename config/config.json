@@ -5,6 +5,12 @@
     "database": "queueing",
     "host": "queueing-db",
     "dialect": "mariadb",
+    "define": {
+      "underscored": true,
+      "underscoredAll": true,
+      "createdAt": "created_at",
+      "updatedAt": "updated_at"
+    },
     "dialectOptions": {
       "charset": "utf8mb4",
       "dateStrings": true,
@@ -19,6 +25,12 @@
     "database": "queueing",
     "host": "mariadb-cluster-ip-service",
     "dialect": "mariadb",
+    "define": {
+      "underscored": true,
+      "underscoredAll": true,
+      "createdAt": "created_at",
+      "updatedAt": "updated_at"
+    },
     "dialectOptions": {
       "charset": "utf8mb4",
       "dateStrings": true,

@@ -10,7 +10,7 @@ const jwtOptions = {
 }
 
 const jwtAuthentication = new JwtStrategy(jwtOptions, (payload, done) => {
-    if(payload.isAdmin) done(null, true);
+    if(payload.is_admin) done(null, true);
     else done(null, false);
 })
 

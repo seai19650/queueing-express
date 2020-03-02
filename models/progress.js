@@ -1,16 +1,21 @@
 'use strict';
 module.exports = (sequelize, DataTypes) => {
   const Progress = sequelize.define('Progress', {
-    statusCode: DataTypes.STRING,
+    status_code: DataTypes.STRING,
     payload: DataTypes.STRING
-  }, {charset: 'utf8mb4'});
+  }, {
+    charset: 'utf8mb4',
+    underscored: true,
+    freezeTableName: true,
+    tableName: 'Progresses'
+  });
   Progress.associate = function(models) {
     Progress.belongsTo(models.Request, {
-      foreignKey: 'requestId',
+      foreignKey: 'request_id',
       as: 'request'
     })
     Progress.belongsTo(models.Result, {
-      foreignKey: 'requestId',
+      foreignKey: 'request_id',
       as: 'result'
     })
   };

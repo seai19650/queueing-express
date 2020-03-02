@@ -30,7 +30,7 @@ const getHistory = (req, res) => {
             result = result.get({plain:true})
             result.request.documents = (JSON.parse(result.request.documents))
             result.progresses.forEach(progress => {
-                progress.status = api.getStatusMessage(progress.statusCode, progress.payload.split(","))
+                progress.status = api.getStatusMessage(progress.status_code, progress.payload.split(","))
                 delete progress.payload
             })
         })

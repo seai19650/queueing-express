@@ -8,13 +8,13 @@ module.exports = {
         primaryKey: true,
         type: Sequelize.INTEGER
       },
-      statusCode: {
+      status_code: {
         type: Sequelize.STRING
       },
       payload: {
         type: Sequelize.STRING
       },
-      requestId: {
+      request_id: {
         type: Sequelize.INTEGER,
         allowNull: false,
         references: {
@@ -22,11 +22,11 @@ module.exports = {
           key: 'id'
         },
       },
-      createdAt: {
+      created_at: {
         allowNull: false,
         type: Sequelize.DATE
       },
-      updatedAt: {
+      updated_at: {
         allowNull: false,
         type: Sequelize.DATE
       }

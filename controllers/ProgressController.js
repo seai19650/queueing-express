@@ -11,6 +11,10 @@ let latestProgresses = {}
 
 const handleProgressStatus = async (req, res) => {
 
+    if (req.body.data) {
+        req.body.data = JSON.parse(req.body.data.replace(/'/g, '"'))
+    }
+
     if (typeof req.body.payload === "string") {
         req.body.payload = [req.body.payload]
     }
@@ -18,26 +22,30 @@ const handleProgressStatus = async (req, res) => {
     console.log(` ==> [${req.body.id}] : ${req.body.code} "${api.getStatusMessage(req.body.code, req.body.payload)}"`)
 
     let progress = {
-        requestId: req.body.id,
-        statusCode: req.body.code,
+        request_id: req.body.id,
+        status_code: req.body.code,
         payload: req.body.payload.toString(),
     }
 
-    if (req.body.keep === "True") {
+    if (req.body.keep) {
+        console.log(" ===> [Save] Progress")
         Progress.create(progress)
     }
 
-    if (req.files) {
+    if (progress.status_code === '192') {
         Result.create({
-            requestId: req.body.id,
-            filename: req.files[0].filename
+            request_id: req.body.id,
+            term_topic_matrix: JSON.stringify(req.body.data.term_topic_matrix),
+            document_topic_matrix: JSON.stringify(req.body.data.document_topic_matrix),
+            topic_stat: JSON.stringify(req.body.data.topic_stat),
+            term_pairs: JSON.stringify(req.body.data.term_pairs),
+            unreadable_documents: JSON.stringify(req.body.data.unreadable_documents)
         })
-        progress.filename = req.files[0].filename
     }
 
     progress.status = api.getStatusMessage(req.body.code, req.body.payload)
     io.emit('progress', {'payload': progress})
-    if (progress.statusCode === '050') {
+    if (progress.status_code === '050') {
         io.emit('history', {'payload': progress})
     }
 

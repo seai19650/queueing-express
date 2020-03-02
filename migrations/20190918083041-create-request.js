@@ -8,18 +8,21 @@ module.exports = {
         primaryKey: true,
         type: Sequelize.INTEGER
       },
-      projectId: {
+      project_id: {
         type: Sequelize.STRING,
         unique: true
+      },
+      project_name: {
+        type: Sequelize.STRING
       },
       documents: {
         type: Sequelize.TEXT
       },
-      createdAt: {
+      created_at: {
         allowNull: false,
         type: Sequelize.DATE
       },
-      updatedAt: {
+      updated_at: {
         allowNull: false,
         type: Sequelize.DATE
       }

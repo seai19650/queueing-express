@@ -15,7 +15,7 @@ const doRegister = async (req, res) => {
     User.create({
         username: req.body.username,
         password: req.body.password,
-        isAdmin: true
+        is_admin: true
     }).then(user => {
         delete user.password
         res.status(201).json(user)
@@ -26,7 +26,7 @@ const doLogin = async (req, res) => {
     const payload = {
         sub: req.body.username,
         iat: new Date().getTime()/1000,
-        isAdmin: req.userData.isAdmin
+        is_admin: req.userData.is_admin
     }
 
     res.status(200).json({
@@ -42,7 +42,7 @@ const doRefreshToken = async (req, res) => {
             const payload = {
                 sub: req.body.username,
                 iat: new Date().getTime()/1000,
-                isAdmin: true
+                is_admin: true
             }
             res.status(200).json({
                 username: req.body.username,
@@ -57,8 +57,8 @@ const doRefreshToken = async (req, res) => {
 
 const getUserData = async (req, res) => {
 
-    decodedToken = jwt.decode(req.headers.authorization.split(" ")[1], SECRET)
-    payload = {
+    let decodedToken = jwt.decode(req.headers.authorization.split(" ")[1], SECRET)
+    let payload = {
         user: {
             username: decodedToken['sub'],
             exp: decodedToken['exp']
