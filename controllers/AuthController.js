@@ -31,26 +31,33 @@ const doLogin = async (req, res) => {
 
     res.status(200).json({
         username: req.body.username,
-        token: jwt.sign(payload, SECRET, {expiresIn: '30m'}),
-        refreshToken: boundWithRefreshToken(req.body.username)
+        token: jwt.sign(payload, SECRET, {expiresIn: '1m'})
     })
 }
 
 const doRefreshToken = async (req, res) => {
-    redisClient.get(req.body.username, (error, data) => {
-        if (data !== null && req.body.refreshToken === data) {
+    let decodedToken = jwt.decode(req.headers.authorization.split(" ")[1], SECRET)
+    redisClient.get(decodedToken['sub'], (error, data) => {
+
+        console.log("Token Registered:")
+        console.log(data)
+        console.log(req.body)
+
+        if (data !== null && req.body.refresh_token === data) {
             const payload = {
-                sub: req.body.username,
+                sub: decodedToken['sub'],
                 iat: new Date().getTime()/1000,
                 is_admin: true
             }
             res.status(200).json({
-                username: req.body.username,
-                token: jwt.sign(payload, SECRET, {expiresIn: '30m'}),
-                refreshToken: boundWithRefreshToken(req.body.username)
+                username: decodedToken['sub'],
+                token: jwt.sign(payload, SECRET, {expiresIn: '1m'}),
+                refresh_token: boundWithRefreshToken(decodedToken['sub'])
             })
         } else {
-            res.status(401).send()
+            res.status(401).json({
+                status: "Refresh Token is not valid"
+            })
         }
     })
 }
@@ -61,7 +68,8 @@ const getUserData = async (req, res) => {
     let payload = {
         user: {
             username: decodedToken['sub'],
-            exp: decodedToken['exp']
+            exp: decodedToken['exp'],
+            refresh_token: boundWithRefreshToken(decodedToken['sub'])
         }
     }
     res.status(200).json(payload)
@@ -69,7 +77,7 @@ const getUserData = async (req, res) => {
 
 function boundWithRefreshToken(username) {
     let refreshToken = randtoken.uid(256)
-    redisClient.set(username, refreshToken)
+    redisClient.set(username, refreshToken, redis.print)
     return refreshToken
 }
 

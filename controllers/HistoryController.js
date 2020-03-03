@@ -20,10 +20,10 @@ const getHistory = (req, res) => {
             }
         ],
         order: [
-            ['createdAt', 'DESC'],
-            [{model: Progress, as: 'progresses'}, 'createdAt', 'DESC'],
+            ['created_at', 'DESC'],
+            [{model: Progress, as: 'progresses'}, 'created_at', 'DESC'],
             [{model: Progress, as: 'progresses'}, 'id', 'DESC'],
-            [{model: Request, as: 'request'}, 'createdAt', 'DESC']
+            [{model: Request, as: 'request'}, 'created_at', 'DESC']
         ]
     }).then(results => {
         results.forEach(result => {
