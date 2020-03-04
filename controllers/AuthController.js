@@ -31,7 +31,7 @@ const doLogin = async (req, res) => {
 
     res.status(200).json({
         username: req.body.username,
-        token: jwt.sign(payload, SECRET, {expiresIn: '1m'})
+        token: jwt.sign(payload, SECRET, {expiresIn: '30m'})
     })
 }
 
@@ -46,7 +46,7 @@ const doRefreshToken = async (req, res) => {
             }
             res.status(200).json({
                 username: decodedToken['sub'],
-                token: jwt.sign(payload, SECRET, {expiresIn: '1m'}),
+                token: jwt.sign(payload, SECRET, {expiresIn: '30m'}),
                 refresh_token: boundWithRefreshToken(decodedToken['sub'])
             })
         } else {
