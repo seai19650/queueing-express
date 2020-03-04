@@ -33,11 +33,22 @@ const getRequestByProjectId = (req, res) => {
         targetedRequest.progresses.map(progress => {
             progress['status'] = api.getStatusMessage(progress['status_code'], progress['payload'])
             delete progress['payload']
+            delete progress['id']
+            delete progress['request_id']
+            delete progress['updated_at']
         })
-        let resultToJson = ['term_topic_matrix', 'document_topic_matrix', 'topic_stat', 'term_pairs', 'unreadable_documents']
-        resultToJson.forEach(key => {
-            targetedRequest.result[key] = JSON.parse(targetedRequest.result[key])
-        })
+        if (targetedRequest.result !== null) {
+            let resultToJson = ['term_topic_matrix', 'document_topic_matrix', 'topic_stat', 'term_pairs', 'unreadable_documents']
+            resultToJson.forEach(key => {
+                targetedRequest.result[key] = JSON.parse(targetedRequest.result[key])
+                delete targetedRequest.result[key]['id']
+                delete targetedRequest.result[key]['request_id']
+                delete targetedRequest.result[key]['updated_at']
+            })
+            delete targetedRequest.result['id']
+            delete targetedRequest.result['request_id']
+            delete targetedRequest.result['updated_at']
+        }
         res.status(200).json(targetedRequest)
     })
 }

@@ -15,6 +15,13 @@ if (config.use_env_variable) {
   sequelize = new Sequelize(config.database, config.username, config.password, config);
 }
 
+// make sure db/client/connection can support emoji
+sequelize.query("SET NAMES utf8mb4;")
+// confirm settings
+sequelize.query("SHOW VARIABLES WHERE Variable_name LIKE 'character_set_%' OR Variable_name LIKE 'collation%'").then(function(data) {
+  console.log(data);
+})
+
 fs
   .readdirSync(__dirname)
   .filter(file => {

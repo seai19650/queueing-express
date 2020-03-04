@@ -9,10 +9,12 @@
       "underscored": true,
       "underscoredAll": true,
       "createdAt": "created_at",
-      "updatedAt": "updated_at"
+      "updatedAt": "updated_at",
+      "collate": "utf8mb4_unicode_ci"
     },
     "dialectOptions": {
       "charset": "utf8mb4",
+      "collate": "utf8mb4_unicode_ci",
       "dateStrings": true,
       "typeCast": true,
       "timezone": "Etc/GMT-7"
@@ -29,10 +31,12 @@
       "underscored": true,
       "underscoredAll": true,
       "createdAt": "created_at",
-      "updatedAt": "updated_at"
+      "updatedAt": "updated_at",
+      "collate": "utf8mb4_unicode_ci"
     },
     "dialectOptions": {
       "charset": "utf8mb4",
+      "collate": "utf8mb4_unicode_ci",
       "dateStrings": true,
       "typeCast": true,
       "timezone": "Etc/GMT-7"

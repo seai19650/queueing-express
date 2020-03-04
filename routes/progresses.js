@@ -1,10 +1,8 @@
 const express = require('express')
 const router = express.Router()
+const multer  = require('multer')
+const path = require('path')
 const controller = require('../controllers/ProgressController')
-const cors = require('cors')
-const passport = require('passport')
-var multer  = require('multer')
-var path = require('path')
 
 const authMiddleware = require('../middlewares/auth')
 

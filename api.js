@@ -1,24 +1,8 @@
-String.prototype.format = function() {
-    var args = arguments;
-    this.unkeyed_index = 0;
-    return this.replace(/\{(\w*)\}/g, function(match, key) {
-        if (key === '') {
-            key = this.unkeyed_index;
-            this.unkeyed_index++
-        }
-        if (key == +key) {
-            return args[key] !== 'undefined'
-                ? args[key]
-                : match;
-        } else {
-            for (var i = 0; i < args.length; i++) {
-                if (typeof args[i] === 'object' && typeof args[i][key] !== 'undefined') {
-                    return args[i][key];
-                }
-            }
-            return match;
-        }
-    }.bind(this));
+String.prototype.format = function () {
+    var i = 0, args = arguments;
+    return this.replace(/{}/g, function () {
+        return typeof args[i] != 'undefined' ? args[i++] : '';
+    });
 }
 
 const getStatusMessage = (id, payload) => {
@@ -35,7 +19,7 @@ const getStatusMessage = (id, payload) => {
         '030': "converting request's resources",
         '031': "​​converting {} document{}",
         '040': "threading",
-        '050': "complete exporting file in {} language",
+        '050': "complete",
 
         '110': "input dataset",
         '111': "input dataset from {}",
@@ -63,11 +47,7 @@ const getStatusMessage = (id, payload) => {
     if (!statuses[id]) {
         message = `Unknown Code ${id}`
     } else {
-        if (payload.length > 0 && payload[0] !== "") {
-            message = statuses[id].format(...payload)
-        } else {
-            message = statuses[id]
-        }
+        message = statuses[id].format(...payload)
     }
 
     return message

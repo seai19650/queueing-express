@@ -9,19 +9,19 @@ module.exports = {
         type: Sequelize.INTEGER
       },
       term_topic_matrix: {
-        type: Sequelize.TEXT
+        type: Sequelize.TEXT('long')
       },
       document_topic_matrix: {
-        type: Sequelize.TEXT
+        type: Sequelize.TEXT('long')
       },
       topic_stat: {
-        type: Sequelize.TEXT
+        type: Sequelize.TEXT('long')
       },
       term_pairs: {
-        type: Sequelize.TEXT
+        type: Sequelize.TEXT('long')
       },
       unreadable_documents: {
-        type: Sequelize.TEXT
+        type: Sequelize.TEXT('long')
       },
       request_id: {
         type: Sequelize.INTEGER,

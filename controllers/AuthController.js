@@ -38,11 +38,6 @@ const doLogin = async (req, res) => {
 const doRefreshToken = async (req, res) => {
     let decodedToken = jwt.decode(req.headers.authorization.split(" ")[1], SECRET)
     redisClient.get(decodedToken['sub'], (error, data) => {
-
-        console.log("Token Registered:")
-        console.log(data)
-        console.log(req.body)
-
         if (data !== null && req.body.refresh_token === data) {
             const payload = {
                 sub: decodedToken['sub'],
@@ -77,7 +72,7 @@ const getUserData = async (req, res) => {
 
 function boundWithRefreshToken(username) {
     let refreshToken = randtoken.uid(256)
-    redisClient.set(username, refreshToken, redis.print)
+    redisClient.set(username, refreshToken)
     return refreshToken
 }
 
