@@ -25,6 +25,7 @@ const result = require("./routes/results")
 const history = require("./routes/histories")
 const queue = require("./routes/queues")
 const health = require("./routes/health")
+const core = require("./routes/core")
 
 app.get("/", function(req, res) {
     return res.send("Proxy API Server Container")
@@ -41,6 +42,7 @@ app.use("/result", result)
 app.use("/history", history)
 app.use("/queue", queue)
 app.use("/health", health)
+app.use("/core", core)
 
 http.listen(3000, '0.0.0.0', () => {
     db.sequelize.sync()

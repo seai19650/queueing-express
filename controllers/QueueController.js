@@ -25,7 +25,7 @@ const getQueue = async (req, res) => {
                 'content-type': 'application/json'
             },
             url: `http://${rabbitmq_url}/api/queues/%2f/processing.requests/get`,
-            body: {"count": 5, "requeue": true, "encoding": "auto", "truncate": 50000, "ackmode": "ack_requeue_true"},
+            body: {"count": 100, "requeue": true, "encoding": "auto", "truncate": 50000, "ackmode": "ack_requeue_true"},
             json: true
         },
         (error, response, body) => {

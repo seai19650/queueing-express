@@ -41,7 +41,9 @@ const getStatusMessage = (id, payload) => {
 
         '410': "{} is not downloadable",
 
-        '510': "input dataset failed on document {}"
+        '510': "input dataset failed on document {}",
+
+        "601": "document download process is failed due to unreachable url(s)"
     }
 
     if (!statuses[id]) {

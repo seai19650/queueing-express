@@ -35,11 +35,13 @@ const handleProgressStatus = async (req, res) => {
     if (progress.status_code === '192') {
         Result.create({
             request_id: req.body.id,
+            topic_chart_url: JSON.stringify(req.body.data.topic_chart_url),
             term_topic_matrix: JSON.stringify(req.body.data.term_topic_matrix),
             document_topic_matrix: JSON.stringify(req.body.data.document_topic_matrix),
             topic_stat: JSON.stringify(req.body.data.topic_stat),
             term_pairs: JSON.stringify(req.body.data.term_pairs),
-            unreadable_documents: JSON.stringify(req.body.data.unreadable_documents)
+            unreadable_documents: JSON.stringify(req.body.data.unreadable_documents),
+            undownloadable_documents: JSON.stringify(req.body.data.undownloadable_documents)
         })
     }
 

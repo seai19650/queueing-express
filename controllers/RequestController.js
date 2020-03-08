@@ -7,11 +7,61 @@ const publish = require("../rabbitmq").publish
 const io = require("../io").getio()
 const api = require("../api")
 
-const list = async (req, res) => {
-    const payload = await Request.findAll({
-        where: {id: req.params.id}
+const getRequests = (req, res) => {
+
+    let isLastPage = false
+    let page = req.query.page !== undefined ? parseInt(req.query.page) : 1
+    let pageSize = req.query.pageSize !== undefined ? parseInt(req.query.pageSize) : 10
+
+    const offset = (Math.max(page-1, 0)) * pageSize
+
+    Request.findAll({
+        limit: pageSize,
+        offset: offset,
+        include: [
+            {
+                model: Progress,
+                as: 'progresses'
+            },
+            {
+                model: Result,
+                as: 'result'
+            }
+        ],
+        order: [
+            ['created_at', 'DESC'],
+            [{model: Progress, as: 'progresses'}, 'created_at', 'DESC'],
+            [{model: Progress, as: 'progresses'}, 'id', 'DESC'],
+            [{model: Result, as: 'result'}, 'created_at', 'DESC']
+        ]
+    }).then(requests => {
+        requests.forEach(request => {
+            if (request.id === 1) {
+                isLastPage = true
+            }
+            request.set("documents", JSON.parse(request.get("documents")))
+            request.progresses.forEach(progress => {
+                progress.setDataValue("status", api.getStatusMessage(progress.get('status_code'), progress.get('payload').split(",")))
+                delete progress.payload
+            })
+            if (request.result !== null) {
+                request.result = formatResultOutput(request.result)
+            }
+        })
+
+        let pagination = {}
+        if (requests.length === pageSize && !isLastPage) {
+            pagination['next'] = `?page=${page+1}&pageSize=${pageSize}`
+        }
+        if (page > 1) {
+            pagination['previous'] = `?page=${page-1}&pageSize=${pageSize}`
+        }
+
+        res.status(200).json({
+            data: requests,
+            pagination: pagination
+        })
     })
-    res.send(payload)
 }
 
 const getRequestByProjectId = (req, res) => {
@@ -38,16 +88,7 @@ const getRequestByProjectId = (req, res) => {
             delete progress['updated_at']
         })
         if (targetedRequest.result !== null) {
-            let resultToJson = ['term_topic_matrix', 'document_topic_matrix', 'topic_stat', 'term_pairs', 'unreadable_documents']
-            resultToJson.forEach(key => {
-                targetedRequest.result[key] = JSON.parse(targetedRequest.result[key])
-                delete targetedRequest.result[key]['id']
-                delete targetedRequest.result[key]['request_id']
-                delete targetedRequest.result[key]['updated_at']
-            })
-            delete targetedRequest.result['id']
-            delete targetedRequest.result['request_id']
-            delete targetedRequest.result['updated_at']
+            targetedRequest.result = formatResultOutput(targetedRequest.result)
         }
         res.status(200).json(targetedRequest)
     })
@@ -104,8 +145,26 @@ const pushToQueue = async (req, res) => {
     })
 }
 
+function formatResultOutput (result) {
+    let resultToJson = ['topic_chart_url',
+        'term_topic_matrix',
+        'document_topic_matrix',
+        'topic_stat', 'term_pairs',
+        'unreadable_documents']
+    resultToJson.forEach(key => {
+        result[key] = JSON.parse(result[key])
+        delete result[key]['id']
+        delete result[key]['request_id']
+        delete result[key]['updated_at']
+    })
+    delete result['id']
+    delete result['request_id']
+    delete result['updated_at']
+    return result
+}
+
 module.exports = {
-    list,
-    pushToQueue,
-    getRequestByProjectId
+    getRequests,
+    getRequestByProjectId,
+    pushToQueue
 }

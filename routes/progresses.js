@@ -11,7 +11,7 @@ var storage = multer.diskStorage({
     cb(null, 'outputs/')
   },
   filename: function (req, file, cb) {
-    cb(null, Date.now() + '-' + [...Array(30)].map(() => Math.random().toString(36)[2]).join('') + path.extname(file.originalname)) //Appending extension
+    cb(null, file.originalname)
   }
 })
 

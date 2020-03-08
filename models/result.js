@@ -1,11 +1,13 @@
 'use strict';
 module.exports = (sequelize, DataTypes) => {
   const Result = sequelize.define('Result', {
+    topic_chart_url: DataTypes.TEXT,
     term_topic_matrix: DataTypes.TEXT,
     document_topic_matrix: DataTypes.TEXT,
     topic_stat: DataTypes.TEXT,
     term_pairs: DataTypes.TEXT,
-    unreadable_documents: DataTypes.TEXT
+    unreadable_documents: DataTypes.TEXT,
+    undownloadable_documents: DataTypes.TEXT
   }, {
     charset: 'utf8mb4',
     underscored: true,

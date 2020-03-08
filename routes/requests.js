@@ -4,6 +4,7 @@ const controller = require('../controllers/RequestController')
 
 const authMiddleware = require('../middlewares/auth')
 
+router.get('/', controller.getRequests)
 router.get('/:project_id', controller.getRequestByProjectId)
 router.post('/', controller.pushToQueue)
 

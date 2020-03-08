@@ -8,6 +8,9 @@ module.exports = {
         primaryKey: true,
         type: Sequelize.INTEGER
       },
+      topic_chart_url: {
+        type: Sequelize.TEXT('long')
+      },
       term_topic_matrix: {
         type: Sequelize.TEXT('long')
       },
@@ -21,6 +24,9 @@ module.exports = {
         type: Sequelize.TEXT('long')
       },
       unreadable_documents: {
+        type: Sequelize.TEXT('long')
+      },
+      undownloadable_documents: {
         type: Sequelize.TEXT('long')
       },
       request_id: {
