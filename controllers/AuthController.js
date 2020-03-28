@@ -15,7 +15,7 @@ const doRegister = async (req, res) => {
     User.create({
         username: req.body.username,
         password: req.body.password,
-        is_admin: true
+        is_admin: false
     }).then(user => {
         delete user.password
         res.status(201).json(user)
@@ -31,13 +31,15 @@ const doLogin = async (req, res) => {
 
     res.status(200).json({
         username: req.body.username,
-        token: jwt.sign(payload, SECRET, {expiresIn: '30m'})
+        token: jwt.sign(payload, SECRET, {expiresIn: '5m'})
     })
 }
 
 const doRefreshToken = async (req, res) => {
     let decodedToken = jwt.decode(req.headers.authorization.split(" ")[1], SECRET)
     redisClient.get(decodedToken['sub'], (error, data) => {
+        console.log(data)
+        console.log(req.body.refresh_token)
         if (data !== null && req.body.refresh_token === data) {
             const payload = {
                 sub: decodedToken['sub'],
@@ -46,7 +48,7 @@ const doRefreshToken = async (req, res) => {
             }
             res.status(200).json({
                 username: decodedToken['sub'],
-                token: jwt.sign(payload, SECRET, {expiresIn: '30m'}),
+                token: jwt.sign(payload, SECRET, {expiresIn: '5m'}),
                 refresh_token: boundWithRefreshToken(decodedToken['sub'])
             })
         } else {
@@ -67,6 +69,7 @@ const getUserData = async (req, res) => {
             refresh_token: boundWithRefreshToken(decodedToken['sub'])
         }
     }
+    console.log(payload)
     res.status(200).json(payload)
 }
 

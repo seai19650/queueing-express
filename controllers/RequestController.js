@@ -11,7 +11,7 @@ const getRequests = (req, res) => {
 
     let isLastPage = false
     let page = req.query.page !== undefined ? parseInt(req.query.page) : 1
-    let pageSize = req.query.pageSize !== undefined ? parseInt(req.query.pageSize) : 10
+    let pageSize = req.query.pageSize !== undefined ? parseInt(req.query.pageSize) : 50
 
     const offset = (Math.max(page-1, 0)) * pageSize
 
@@ -22,17 +22,13 @@ const getRequests = (req, res) => {
             {
                 model: Progress,
                 as: 'progresses'
-            },
-            {
-                model: Result,
-                as: 'result'
             }
         ],
         order: [
+            ['id', 'DESC'],
             ['created_at', 'DESC'],
             [{model: Progress, as: 'progresses'}, 'created_at', 'DESC'],
-            [{model: Progress, as: 'progresses'}, 'id', 'DESC'],
-            [{model: Result, as: 'result'}, 'created_at', 'DESC']
+            [{model: Progress, as: 'progresses'}, 'id', 'DESC']
         ]
     }).then(requests => {
         requests.forEach(request => {
@@ -44,9 +40,6 @@ const getRequests = (req, res) => {
                 progress.setDataValue("status", api.getStatusMessage(progress.get('status_code'), progress.get('payload').split(",")))
                 delete progress.payload
             })
-            if (request.result !== null) {
-                request.result = formatResultOutput(request.result)
-            }
         })
 
         let pagination = {}
@@ -72,10 +65,10 @@ const getRequestByProjectId = (req, res) => {
                 model: Progress,
                 as: "progresses"
             },
-            {
-                model: Result,
-                as: "result"
-            }
+            // {
+            //     model: Result,
+            //     as: "result"
+            // }
         ]
     }).then(targetedRequest => {
         targetedRequest = targetedRequest.get({plain:true})
@@ -87,20 +80,56 @@ const getRequestByProjectId = (req, res) => {
             delete progress['request_id']
             delete progress['updated_at']
         })
-        if (targetedRequest.result !== null) {
-            targetedRequest.result = formatResultOutput(targetedRequest.result)
-        }
+        // if (targetedRequest.result !== null) {
+        //     targetedRequest.result = formatResultOutput(targetedRequest.result)
+        // }
         res.status(200).json(targetedRequest)
+    })
+}
+
+const getRequestByProjectName = (req, res) => {
+    Request.findAll({
+        where: {
+            project_name: {
+                [Sequelize.Op.like]: `%${req.params.project_name}%`
+            }
+        },
+        include: [
+            {
+                model: Progress,
+                as: "progresses"
+            },
+            // {
+            //     model: Result,
+            //     as: "result"
+            // }
+        ]
+    }).then(targetedRequests => {
+
+        targetedRequests.forEach(targetedRequest => {
+            targetedRequest.set('documents', JSON.parse(targetedRequest.get('documents')))
+            targetedRequest = targetedRequest.get({plain:true})
+            targetedRequest.progresses.map(progress => {
+                progress['status'] = api.getStatusMessage(progress['status_code'], progress['payload'])
+                delete progress['payload']
+                delete progress['id']
+                delete progress['request_id']
+                delete progress['updated_at']
+            })
+        })
+
+        res.status(200).json(targetedRequests)
     })
 }
 
 const pushToQueue = async (req, res) => {
 
+    console.log(Object.keys(req.body.documents).length)
     // Make new request payload
     let newRequest = {
         project_id: req.body.project_id,
         project_name: req.body.project_name,
-        documents: req.body.documents.toString()
+        documents: JSON.stringify(req.body.documents)
     }
 
     // Store this new request into database
@@ -145,6 +174,18 @@ const pushToQueue = async (req, res) => {
     })
 }
 
+const deleteRequestById = async (req, res) => {
+    Request.destroy({
+        where: {
+            id: req.params.id
+        }
+    }).then(result => {
+        res.status(200).json({
+            message: `Project as ID ${req.params.id} has been deleted with all its data.`
+        })
+    })
+}
+
 function formatResultOutput (result) {
     let resultToJson = ['topic_chart_url',
         'term_topic_matrix',
@@ -166,5 +207,7 @@ function formatResultOutput (result) {
 module.exports = {
     getRequests,
     getRequestByProjectId,
-    pushToQueue
+    getRequestByProjectName,
+    pushToQueue,
+    deleteRequestById
 }

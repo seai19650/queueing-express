@@ -11,7 +11,12 @@ module.exports = (sequelize, DataTypes) => {
     charset: 'utf8mb4',
     underscored: true,
     freezeTableName: true,
-    tableName: 'Users'
+    tableName: 'Users',
+    scopes: {
+      withoutPassword: {
+        attributes: { exclude: ['password'] },
+      }
+    }
   });
   User.associate = function(models) {
     // associations can be defined here

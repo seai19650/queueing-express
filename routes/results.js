@@ -4,7 +4,7 @@ const controller = require('../controllers/ResultController')
 
 const authMiddleware = require('../middlewares/auth')
 
-router.get('/:project_id', controller.getResultFileList)
+router.get('/:project_id', controller.getResultByProjectId)
 router.get('/file/:fileIdentity', controller.getResultFile)
 router.delete('/:project_id', controller.deleteResultFile)
 

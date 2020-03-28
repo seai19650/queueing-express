@@ -25,8 +25,8 @@
     "username": "queueing-access",
     "password": "whateverItworks",
     "database": "queueing",
-    "host": "mariadb-cluster-ip-service",
-    "dialect": "mariadb",
+    "host": "127.0.0.1",
+    "dialect": "mysql",
     "define": {
       "underscored": true,
       "underscoredAll": true,

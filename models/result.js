@@ -17,13 +17,15 @@ module.exports = (sequelize, DataTypes) => {
   Result.associate = function(models) {
     Result.belongsTo(models.Request, {
       foreignKey: 'request_id',
-      as: 'request'
+      as: 'request',
+      onDelete: 'CASCADE',
+      onUpdate: 'CASCADE'
     })
     Result.hasMany(models.Progress, {
       sourceKey: 'request_id',
       foreignKey: 'request_id',
       as: 'progresses',
-      onDelete: 'SET NULL',
+      onDelete: 'CASCADE',
       onUpdate: 'CASCADE'
     })
   };

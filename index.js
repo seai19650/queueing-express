@@ -10,12 +10,22 @@ const io = require('./io').init(http)
 const redis = require('redis')
 const redisClient = require('./redis').init(redis)
 
-app.use(bodyParser.json({limit: '10mb', extended: true}))
-app.use(bodyParser.urlencoded({limit: '10mb', extended: true}))
+app.use(bodyParser.json({limit: '200mb', extended: true}))
+app.use(bodyParser.urlencoded({limit: '200mb', extended: true, parameterLimit: 50}))
 app.use(cors({
     origin: '*',
     credentials: true,
 }))
+
+const env = process.env.NODE_ENV || "development"
+
+if (env.startsWith("k8s")) {
+    prefixApi = "/api"
+    console.log("K8s Mode")
+} else {
+    prefixApi = ""
+    console.log("Development Mode")
+}
 
 // Routing Logic
 const auth = require("./routes/auth")
@@ -26,23 +36,25 @@ const history = require("./routes/histories")
 const queue = require("./routes/queues")
 const health = require("./routes/health")
 const core = require("./routes/core")
+const user = require("./routes/user")
 
-app.get("/", function(req, res) {
+app.get(`${prefixApi}/`, function(req, res) {
     return res.send("Proxy API Server Container")
 })
 
-app.post("/", function(req, res) {
+app.post(`${prefixApi}/`, function(req, res) {
     return res.json(req.body)
 })
 
-app.use("/auth", auth)
-app.use("/request", requests)
-app.use("/progress", progresses)
-app.use("/result", result)
-app.use("/history", history)
-app.use("/queue", queue)
-app.use("/health", health)
-app.use("/core", core)
+app.use(`${prefixApi}/auth`, auth)
+app.use(`${prefixApi}/request`, requests)
+app.use(`${prefixApi}/progress`, progresses)
+app.use(`${prefixApi}/result`, result)
+app.use(`${prefixApi}/history`, history)
+app.use(`${prefixApi}/queue`, queue)
+app.use(`${prefixApi}/health`, health)
+app.use(`${prefixApi}/core`, core)
+app.use(`${prefixApi}/user`, user)
 
 http.listen(3000, '0.0.0.0', () => {
     db.sequelize.sync()

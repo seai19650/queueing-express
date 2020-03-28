@@ -18,6 +18,18 @@ module.exports = {
       documents: {
         type: Sequelize.TEXT
       },
+      is_error: {
+        type: Sequelize.BOOLEAN,
+        defaultValue: false
+      },
+      is_notified: {
+        type: Sequelize.BOOLEAN,
+        defaultValue: false
+      },
+      is_completed: {
+        type: Sequelize.BOOLEAN,
+        defaultValue: false
+      },
       created_at: {
         allowNull: false,
         type: Sequelize.DATE

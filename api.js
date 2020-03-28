@@ -43,7 +43,8 @@ const getStatusMessage = (id, payload) => {
 
         '510': "input dataset failed on document {}",
 
-        "601": "document download process is failed due to unreachable url(s)"
+        "601": "document download process is failed due to unreachable url(s)",
+        "602": "duplicated urls were found on the payload"
     }
 
     if (!statuses[id]) {

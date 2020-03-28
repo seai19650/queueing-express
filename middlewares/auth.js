@@ -10,8 +10,16 @@ const requireLoginAuthentication = (req, res, next) => {
         if (user) {
             console.log("User Found")
             if (user.validPassword(req.body.password)) {
-                req.userData = user
-                next()
+                if (user.get("is_admin")) {
+                    req.userData = user
+                    next()
+                } else {
+                    console.log("Not Activate")
+                    res.status(403).json({
+                        message: 'Not Activate'
+                    })
+                }
+
             } else {
                 console.log("Wrong Credential")
                 res.status(401).json({

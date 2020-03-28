@@ -17,6 +17,7 @@ module.exports = {
       request_id: {
         type: Sequelize.INTEGER,
         allowNull: false,
+        onDelete: 'CASCADE',
         references: {
           model: 'Requests',
           key: 'id'

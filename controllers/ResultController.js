@@ -1,21 +1,40 @@
 const express = require("express")
+const Sequelize = require('sequelize');
 const Request = require("../models").Request
 const Result = require("../models").Result
 const fs = require("fs")
 
-const getResultFileList = async (req, res) => {
+const getResultByProjectId = async (req, res) => {
+
+  let targetedResultFields = []
+  targetedResultFields.push("topic_chart_url")
+  if (req.query.getField !== undefined) {
+    targetedResultFields = targetedResultFields.concat(req.query.getField.split(","))
+  }
+  targetedResultFields.push("undownloadable_documents")
+  targetedResultFields.push("unreadable_documents")
+
   let request = await Request.findOne({
     where: {project_id: req.params.project_id},
     include: {
       model: Result,
-      as: "results"
+      as: "result",
+      attributes: targetedResultFields,
     }
+  }).catch(Sequelize.DatabaseError, error => {
+    res.status(400).json({
+      message: `${error.message.split("\n")[0]}`
+    })
   })
-  request = request.get({plain: true})
-  request.documents = JSON.parse(request.documents)
+
+  let result = request.get("result")
+  targetedResultFields.forEach(field => {
+    result[field] = JSON.parse(result[field])
+  })
+
   res.status(200).json({
     project_id: req.params.project_id,
-    results: request.results
+    result: result
   })
 }
 
@@ -71,7 +90,7 @@ const deleteResultFile = async (req, res) => {
 }
 
 module.exports = {
-  getResultFileList,
+  getResultByProjectId,
   getResultFile,
   deleteResultFile
 }
