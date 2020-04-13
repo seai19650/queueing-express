@@ -18,6 +18,13 @@ module.exports = {
       documents: {
         type: Sequelize.TEXT
       },
+      max_no_topic: {
+        type: Sequelize.INTEGER
+      },
+      criteria: {
+        allowNull: true,
+        type: Sequelize.INTEGER
+      },
       is_error: {
         type: Sequelize.BOOLEAN,
         defaultValue: false

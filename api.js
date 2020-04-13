@@ -39,6 +39,12 @@ const getStatusMessage = (id, payload) => {
         "191": "pushing files",
         "192": "pushing result",
 
+        "S00": "comparing part {} out of 17 parts",
+        "S20": "preparing data on part {}",
+        "S30": "word tokenizing on part {}",
+        "S40": "term weighting on part {}",
+        "S50": "measuring the cosine similarity on part {}",
+
         '410': "{} is not downloadable",
 
         '510': "input dataset failed on document {}",
@@ -50,6 +56,9 @@ const getStatusMessage = (id, payload) => {
     if (!statuses[id]) {
         message = `Unknown Code ${id}`
     } else {
+        if (typeof payload === "string") {
+            payload = [payload]
+        }
         message = statuses[id].format(...payload)
     }
 

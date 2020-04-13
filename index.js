@@ -2,13 +2,15 @@ const bodyParser = require("body-parser")
 const express = require("express")
 const cors = require("cors")
 const db = require("./models")
-
 const app = express()
 const http = require('http').createServer(app)
-const io = require('./io').init(http)
 
+const env = process.env.NODE_ENV || "development"
+
+const io = require('./io').init(http)
 const redis = require('redis')
 const redisClient = require('./redis').init(redis)
+const dbConfig = require(__dirname + '/config/config.json')[env];
 
 app.use(bodyParser.json({limit: '200mb', extended: true}))
 app.use(bodyParser.urlencoded({limit: '200mb', extended: true, parameterLimit: 50}))
@@ -17,14 +19,13 @@ app.use(cors({
     credentials: true,
 }))
 
-const env = process.env.NODE_ENV || "development"
-
+let prefixApi
 if (env.startsWith("k8s")) {
     prefixApi = "/api"
-    console.log("K8s Mode")
+    console.log("[-System-] Set Mode as Kubernetes Production")
 } else {
     prefixApi = ""
-    console.log("Development Mode")
+    console.log("[-System-] Set Mode as Development")
 }
 
 // Routing Logic
@@ -39,11 +40,20 @@ const core = require("./routes/core")
 const user = require("./routes/user")
 
 app.get(`${prefixApi}/`, function(req, res) {
-    return res.send("Proxy API Server Container")
-})
-
-app.post(`${prefixApi}/`, function(req, res) {
-    return res.json(req.body)
+    return res.status(200).json({
+        serverAddress: process.env.SERVER_ADDRESS || "http://localhost:8080",
+        serverEnvironment: {
+            mainEnv: env,
+            redisHost: process.env.REDIS_HOST || 'queueing-redis',
+            db: {
+                host: dbConfig.host,
+                dialect: dbConfig.dialect
+            },
+            rabbitmqHost: process.env.RABBITMQ_HOST || 'queueing-rabbitmq'
+        },
+        systemName: "Core API",
+        state: "Online"
+    })
 })
 
 app.use(`${prefixApi}/auth`, auth)
@@ -57,15 +67,10 @@ app.use(`${prefixApi}/core`, core)
 app.use(`${prefixApi}/user`, user)
 
 http.listen(3000, '0.0.0.0', () => {
-    db.sequelize.sync()
-    console.log("My Rest API running on port 3000!")
+    console.log("[-System-] Boot up successfully")
 })
 
 // Socket.io
 io.on('connection', (socket) => {
-    console.log("[Socket.io] Launch")
-    socket.emit('system', {message: 'Hi, Server is talking'})
-    socket.on('message', function(data) {
-        console.log(data)
-    })
+    console.log("[-System-] Socket.io is initialized")
 })

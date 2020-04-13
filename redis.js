@@ -6,6 +6,10 @@ module.exports = {
             host: process.env.REDIS_HOST || 'queueing-redis'
         })
 
+        redisClient.on("connect", function(error) {
+            console.error('[-System-] Redis is connected');
+        })
+
         redisClient.on("error", function(error) {
             console.error(error);
         })

@@ -71,19 +71,22 @@ const getRequestByProjectId = (req, res) => {
             // }
         ]
     }).then(targetedRequest => {
-        targetedRequest = targetedRequest.get({plain:true})
-        targetedRequest.documents = JSON.parse(targetedRequest.documents)
-        targetedRequest.progresses.map(progress => {
-            progress['status'] = api.getStatusMessage(progress['status_code'], progress['payload'])
-            delete progress['payload']
-            delete progress['id']
-            delete progress['request_id']
-            delete progress['updated_at']
-        })
-        // if (targetedRequest.result !== null) {
-        //     targetedRequest.result = formatResultOutput(targetedRequest.result)
-        // }
-        res.status(200).json(targetedRequest)
+        if (targetedRequest !== null) {
+            targetedRequest = targetedRequest.get({plain:true})
+            targetedRequest.documents = JSON.parse(targetedRequest.documents)
+            targetedRequest.progresses.map(progress => {
+                progress['status'] = api.getStatusMessage(progress['status_code'], progress['payload'])
+                delete progress['payload']
+                delete progress['id']
+                delete progress['request_id']
+                delete progress['updated_at']
+            })
+            res.status(200).json(targetedRequest)
+        } else {
+            res.status(404).json({
+                message: `Project ID ${req.params.project_id} does not present on the database.`
+            })
+        }
     })
 }
 
@@ -105,48 +108,50 @@ const getRequestByProjectName = (req, res) => {
             // }
         ]
     }).then(targetedRequests => {
-
-        targetedRequests.forEach(targetedRequest => {
-            targetedRequest.set('documents', JSON.parse(targetedRequest.get('documents')))
-            targetedRequest = targetedRequest.get({plain:true})
-            targetedRequest.progresses.map(progress => {
-                progress['status'] = api.getStatusMessage(progress['status_code'], progress['payload'])
-                delete progress['payload']
-                delete progress['id']
-                delete progress['request_id']
-                delete progress['updated_at']
+        if (targetedRequests !== null) {
+            targetedRequests.forEach(targetedRequest => {
+                targetedRequest.set('documents', JSON.parse(targetedRequest.get('documents')))
+                targetedRequest = targetedRequest.get({plain:true})
+                targetedRequest.progresses.map(progress => {
+                    progress['status'] = api.getStatusMessage(progress['status_code'], progress['payload'])
+                    delete progress['payload']
+                    delete progress['id']
+                    delete progress['request_id']
+                    delete progress['updated_at']
+                })
             })
-        })
-
-        res.status(200).json(targetedRequests)
+            res.status(200).json(targetedRequests)
+        } else {
+            res.status(404).json({
+                message: `Project Name contains "${req.params.project_name}" does not present on the database.`
+            })
+        }
     })
 }
 
 const pushToQueue = async (req, res) => {
 
-    console.log(Object.keys(req.body.documents).length)
     // Make new request payload
     let newRequest = {
         project_id: req.body.project_id,
         project_name: req.body.project_name,
-        documents: JSON.stringify(req.body.documents)
+        documents: JSON.stringify(req.body.documents),
+    }
+    if (req.body.criteria !== undefined) {
+        newRequest.criteria = parseInt(req.body.criteria)
+    }
+    if (req.body.max_no_topic !== undefined) {
+        newRequest.max_no_topic = parseInt(req.body.max_no_topic)
     }
 
     // Store this new request into database
     Request.create(newRequest).then(request => {
+        if (request.get("criteria") === null) {
+            request.set("criteria", "None")
+        }
 
         // Sent To RabbitMQ
-        publish("", "processing.requests",
-            new Buffer.from(
-                JSON.stringify({
-                    id: request.id,
-                    project_id: request.project_id,
-                    project_name: request.project_name,
-                    documents: request.documents,
-                    max_no_topic: req.body.max_no_topic
-                })
-            )
-        )
+        publish("", "processing.requests", new Buffer.from(JSON.stringify(request.get({plain:true}))))
 
         // Make the first progress
         Progress.create({

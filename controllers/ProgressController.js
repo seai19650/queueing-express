@@ -3,6 +3,7 @@ const Sequelize = require('sequelize')
 const Request = require("../models").Request
 const Progress = require("../models").Progress
 const Result = require("../models").Result
+const SimilarityResult = require("../models").SimilarityResult
 const publish = require("../rabbitmq").publish
 const io = require("../io").getio()
 const api = require("../api")
@@ -32,8 +33,6 @@ const handleProgressStatus = async (req, res) => {
     Progress.create(progress)
   }
 
-  console.log(progress.status_code)
-  console.log(progress.status_code.startsWith("6"))
   if (progress.status_code.startsWith("6")) {
     Request.update({
       is_error: true
@@ -55,19 +54,30 @@ const handleProgressStatus = async (req, res) => {
       }
     })
 
-    let result = {
-      request_id: req.body.id,
-      topic_chart_url: JSON.stringify(req.body.data.topic_chart_url),
-      term_topic_matrix: JSON.stringify(req.body.data.term_topic_matrix),
-      document_topic_matrix: JSON.stringify(req.body.data.document_topic_matrix),
-      topic_stat: JSON.stringify(req.body.data.topic_stat),
-      term_pairs: JSON.stringify(req.body.data.term_pairs),
-      unreadable_documents: JSON.stringify(req.body.data.unreadable_documents),
-      undownloadable_documents: JSON.stringify(req.body.data.undownloadable_documents)
+    let result
+    if (req.body.data.topic_similarity === undefined) {
+      result = {
+        request_id: req.body.id,
+        topic_chart_url: JSON.stringify(req.body.data.topic_chart_url),
+        term_topic_matrix: JSON.stringify(req.body.data.term_topic_matrix),
+        document_topic_matrix: JSON.stringify(req.body.data.document_topic_matrix),
+        topic_stat: JSON.stringify(req.body.data.topic_stat),
+        term_pairs: JSON.stringify(req.body.data.term_pairs),
+        unreadable_documents: JSON.stringify(req.body.data.unreadable_documents),
+        undownloadable_documents: JSON.stringify(req.body.data.undownloadable_documents)
+      }
+      // Save it to database
+      Result.create(result)
+    } else {
+      result = {
+        request_id: req.body.id,
+        topic_similarity: JSON.stringify(req.body.data.topic_similarity),
+        unreadable_documents: JSON.stringify(req.body.data.unreadable_documents),
+        undownloadable_documents: JSON.stringify(req.body.data.undownloadable_documents)
+      }
+      console.log(result)
+      SimilarityResult.create(result)
     }
-
-    // Save it to database
-    Result.create(result)
 
     // send result to endpoint
     request.post({

@@ -38,8 +38,6 @@ const doLogin = async (req, res) => {
 const doRefreshToken = async (req, res) => {
     let decodedToken = jwt.decode(req.headers.authorization.split(" ")[1], SECRET)
     redisClient.get(decodedToken['sub'], (error, data) => {
-        console.log(data)
-        console.log(req.body.refresh_token)
         if (data !== null && req.body.refresh_token === data) {
             const payload = {
                 sub: decodedToken['sub'],

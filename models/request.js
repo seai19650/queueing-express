@@ -4,6 +4,8 @@ module.exports = (sequelize, DataTypes) => {
     project_id: DataTypes.STRING,
     project_name: DataTypes.STRING,
     documents: DataTypes.TEXT,
+    max_no_topic: DataTypes.INTEGER,
+    criteria: DataTypes.INTEGER,
     is_error: DataTypes.BOOLEAN,
     is_notified: DataTypes.BOOLEAN,
     is_completed: DataTypes.BOOLEAN,
@@ -23,6 +25,12 @@ module.exports = (sequelize, DataTypes) => {
     Request.hasOne(models.Result, {
       foreignKey: 'request_id',
       as: 'result',
+      onDelete: 'CASCADE',
+      onUpdate: 'CASCADE'
+    })
+    Request.hasOne(models.SimilarityResult, {
+      foreignKey: 'request_id',
+      as: 'similarityResult',
       onDelete: 'CASCADE',
       onUpdate: 'CASCADE'
     })
