@@ -33,7 +33,14 @@ const handleProgressStatus = async (req, res) => {
     Progress.create(progress)
   }
 
+  /**
+   *
+   * Task End With Critical Error
+   *
+   * */
+
   if (progress.status_code.startsWith("6")) {
+
     Request.update({
       is_error: true
     }, {
@@ -41,7 +48,28 @@ const handleProgressStatus = async (req, res) => {
         id: req.body.id
       }
     })
+
+    const thisRequest = await Request.findOne({
+      where: {
+        id: req.body.id
+      }
+    })
+
+    let errorNotifyPayload = {
+      project_id: thisRequest.get("project_id"),
+      success: false,
+      error_message: api.getStatusMessage(progress.status_code, [])
+    }
+
+    notifyEndpoint(req.body.id, errorNotifyPayload)
+
   }
+
+  /**
+   *
+   * Complete with Normal Case
+   *
+   * */
 
   // The Progress is result data
   if (progress.status_code === '192') {
@@ -54,10 +82,17 @@ const handleProgressStatus = async (req, res) => {
       }
     })
 
+    const thisRequest = await Request.findOne({
+      where: {
+        id: req.body.id
+      }
+    })
+
     let result
     if (req.body.data.topic_similarity === undefined) {
       result = {
         request_id: req.body.id,
+        project_id: thisRequest.get("project_id"),
         topic_chart_url: JSON.stringify(req.body.data.topic_chart_url),
         term_topic_matrix: JSON.stringify(req.body.data.term_topic_matrix),
         document_topic_matrix: JSON.stringify(req.body.data.document_topic_matrix),
@@ -71,6 +106,7 @@ const handleProgressStatus = async (req, res) => {
     } else {
       result = {
         request_id: req.body.id,
+        project_id: thisRequest.get("project_id"),
         topic_similarity: JSON.stringify(req.body.data.topic_similarity),
         unreadable_documents: JSON.stringify(req.body.data.unreadable_documents),
         undownloadable_documents: JSON.stringify(req.body.data.undownloadable_documents)
@@ -79,47 +115,18 @@ const handleProgressStatus = async (req, res) => {
       SimilarityResult.create(result)
     }
 
-    // send result to endpoint
-    request.post({
-        headers: {
-          'Authorization': "Token 8e1e28f778add052a00bc687bf9965b97527b191",
-          'content-type': 'application/json'
-        },
-        url: process.env.ENDPOINT,
-        body: result,
-        json: true
-      },
-      (error, response, body) => {
+    // set complete status to payload
+    result.success = true
 
-        if (error) {
-          console.log(error)
-          Request.update({
-            is_notified: false
-          }, {
-            where: {
-              id: req.body.id
-            }
-          })
-          io.emit('system', {
-            'isError': true,
-            'message': 'Failed to Notify Endpoint.'
-          })
-        } else {
-          Request.update({
-            is_notified: true
-          }, {
-            where: {
-              id: req.body.id
-            }
-          })
+    // remove system request_id
+    delete result.request_id
 
-          io.emit('system', {
-            'isError': false,
-            'message': `Notified endpoint on id:${req.body.id} result`
-          })
-        }
-      }
-    )
+    // only pass th version so topic_chart_url is string
+    if (req.body.data.topic_chart_url) {
+      result.topic_chart_url = `${process.env.SERVER_ADDRESS ? process.env.SERVER_ADDRESS : 'http://localhost:8080'}/api/result/file/${req.body.data.topic_chart_url.th}`
+    }
+
+    notifyEndpoint(req.body.id, result)
 
   }
 
@@ -147,6 +154,52 @@ const getLatestProgresses = async (req, res) => {
       .reverse()
       .map(progressId => latestProgresses[progressId])
   })
+}
+
+function notifyEndpoint(id, result) {
+  // send result to endpoint
+  request.post({
+      headers: {
+        'Authorization': process.env.API_KEY,
+        'content-type': 'application/json'
+      },
+      url: process.env.ENDPOINT,
+      body: result,
+      json: true
+    },
+    (error, response, body) => {
+
+      console.log(response)
+      console.log(body)
+
+      if (error) {
+        console.log(error)
+
+        Request.update(
+          {is_notified: false},
+          {where: {id: id}}
+        )
+
+        io.emit('system', {
+          'isError': true,
+          'message': 'Failed to Notify Endpoint.'
+        })
+      } else {
+        Request.update({
+          is_notified: true
+        }, {
+          where: {
+            id: id
+          }
+        })
+
+        io.emit('system', {
+          'isError': false,
+          'message': `Notified endpoint on id:${id} result`
+        })
+      }
+    }
+  )
 }
 
 module.exports = {

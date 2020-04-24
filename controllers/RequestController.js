@@ -6,6 +6,7 @@ const Result = require("../models").Result
 const publish = require("../rabbitmq").publish
 const io = require("../io").getio()
 const api = require("../api")
+const fs = require("fs")
 
 const getRequests = (req, res) => {
 
@@ -137,57 +138,98 @@ const pushToQueue = async (req, res) => {
         project_name: req.body.project_name,
         documents: JSON.stringify(req.body.documents),
     }
-    if (req.body.criteria !== undefined) {
-        newRequest.criteria = parseInt(req.body.criteria)
-    }
-    if (req.body.max_no_topic !== undefined) {
-        newRequest.max_no_topic = parseInt(req.body.max_no_topic)
-    }
 
-    // Store this new request into database
-    Request.create(newRequest).then(request => {
-        if (request.get("criteria") === null) {
-            request.set("criteria", "None")
+    if (!isAcceptRequestFormat(newRequest)) {
+        console.log("Not ok")
+        res.status(400).json({
+            message: 'Required Parameter not found or in wrong format'
+        })
+    } else {
+
+        if (req.body.criteria !== undefined) {
+            newRequest.criteria = parseInt(req.body.criteria)
+        }
+        if (req.body.max_no_topic !== undefined) {
+            newRequest.max_no_topic = parseInt(req.body.max_no_topic)
         }
 
-        // Sent To RabbitMQ
-        publish("", "processing.requests", new Buffer.from(JSON.stringify(request.get({plain:true}))))
+        // Store this new request into database
+        Request.create(newRequest).then(request => {
+            if (request.get("criteria") === null) {
+                request.set("criteria", "None")
+            }
 
-        // Make the first progress
-        Progress.create({
-            request_id: request.id,
-            status_code: "000",
-            payload: request.id,
-        })
+            // Sent To RabbitMQ
+            publish("", "processing.requests", new Buffer.from(JSON.stringify(request.get({plain:true}))))
 
-        // Notify Panel about change
-        io.emit('request', {
-            project_id: req.body.project_id,
-            id: request.id
-        })
+            // Make the first progress
+            Progress.create({
+                request_id: request.id,
+                status_code: "000",
+                payload: request.id,
+            })
 
-        // send feedback
-        res.status(201).json({
-            project_id: req.body.project_id,
-            id: request.id
+            // Notify Panel about change
+            io.emit('request', {
+                project_id: req.body.project_id,
+                id: request.id
+            })
+
+            // send feedback
+            res.status(201).json({
+                project_id: req.body.project_id,
+                id: request.id
+            })
+        }).catch(Sequelize.UniqueConstraintError, error => {
+            res.status(409).json({
+                project_id: req.body.project_id,
+                status: `project_id(${req.body.project_id}) is not unique based on the API System.`
+            })
         })
-    }).catch(Sequelize.UniqueConstraintError, error => {
-        res.status(409).json({
-            project_id: req.body.project_id,
-            status: `project_id(${req.body.project_id}) is not unique based on the API System.`
-        })
-    })
+    }
 }
 
 const deleteRequestById = async (req, res) => {
-    Request.destroy({
+    Request.findOne({
         where: {
             id: req.params.id
+        },
+        include: [
+            {
+                model: Result,
+                as: "result",
+                attributes: ['topic_chart_url']
+            }
+        ]
+    }).then(request => {
+        const fileToDelete = request.result !== null ? JSON.parse(request.result.topic_chart_url).th : null
+        if (fileToDelete !== null) {
+            fs.unlink(`${__dirname}/../outputs/${fileToDelete}`, err => {
+                if (err) {
+                    console.log(err)
+                } else {
+                    Request.destroy({
+                        where: {
+                            id: req.params.id
+                        },
+                    })
+                    res.status(200).json({
+                        message: `Project as ID ${req.params.id} has been deleted with all its data.`,
+                        fileState: `deleted`
+                    })
+                }
+            })
+        } else {
+            Request.destroy({
+                where: {
+                    id: req.params.id
+                },
+            })
+            res.status(200).json({
+                message: `Project as ID ${req.params.id} has been deleted with all its data.`,
+                fileState: `file not exist`
+            })
         }
-    }).then(result => {
-        res.status(200).json({
-            message: `Project as ID ${req.params.id} has been deleted with all its data.`
-        })
     })
 }
 
@@ -207,6 +249,13 @@ function formatResultOutput (result) {
     delete result['request_id']
     delete result['updated_at']
     return result
+}
+
+function isAcceptRequestFormat(payload) {
+    return !((payload['project_id'] === undefined || payload['project_id'] === "") ||
+      (payload['project_name'] === undefined || payload['project_name'] === "") ||
+      (payload['documents'] === undefined || payload['documents'] === ""));
+
 }
 
 module.exports = {

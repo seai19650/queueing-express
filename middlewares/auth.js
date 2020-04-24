@@ -40,7 +40,25 @@ const requireJwtAuthentication = (req, res, next) => {
         .authenticate("jwt", {session: false})(req, res, next);
 }
 
+const requireServerTokenAuthentication = (req, res, next) => {
+    const authKey = req.get("Authorization")
+    if (authKey) {
+        if (authKey === process.env.API_KEY) {
+            next()
+        } else {
+            res.status(403).json({
+                message: 'API Key is not accepted'
+            })
+        }
+    } else {
+        res.status(400).json({
+            message: 'API Key is required'
+        })
+    }
+}
+
 module.exports = {
     requireLoginAuthentication,
-    requireJwtAuthentication
+    requireJwtAuthentication,
+    requireServerTokenAuthentication
 }

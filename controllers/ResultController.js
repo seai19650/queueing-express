@@ -44,7 +44,7 @@ const getResultByProjectId = async (req, res) => {
 
   targetedResultFields.splice(targetedResultFields.indexOf("created_at"), 1)
 
-  if (request !== null) {
+  if (request !== null && request !== undefined) {
     let result = request.get("result")
     let similarityResult = request.get("similarityResult")
     if (result !== null) {
@@ -73,7 +73,7 @@ const getResultByProjectId = async (req, res) => {
           project_id: req.params.project_id,
           error: false,
           success: request.get('is_completed'),
-          similarity_type: request.get("criteria"),
+          criteria: request.get("criteria"),
           ...similarityResult.get({plain: true})
         }
       )

@@ -32,8 +32,23 @@ const deactivateUser = async (req, res) => {
     })
 }
 
+const deleteUserById = async (req, res) => {
+    User.destroy({
+        where: {
+            id: req.params.id
+        }
+    }).then(user => {
+        res.status(200).json({
+            message: `Delete User Successfully`
+        })
+    }).catch(err => {
+        console.log(err)
+    })
+}
+
 module.exports = {
     getAllUsers,
     activateUser,
-    deactivateUser
+    deactivateUser,
+    deleteUserById
 }
